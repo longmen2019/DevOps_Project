@@ -243,6 +243,3 @@ This README provides a step-by-step guide to set up AWS EKS (Elastic Kubernetes 
     kubectl exec -it mongo-0 -- mongo langdb --eval "db.languages.find().pretty()"
     ```
 
-## References
-
-- [AWS EKS Documentation](https://docs.aws.amazon.com/eks/latest[_{{{CITATION{{{_1{](https://github.com/shabi9/aks-demo/tree/f9551a5853a77d2aec150957ea2944fcb3c2a827/README.md)[_{{{CITATION{{{_2{](https://github.com/cloudacademy/voteapp-api-go/tree/6dffaa0e53382320cfa6697c70349a4e8a057ca4/README.md)[_{{{CITATION{{{_3{](https://github.com/ryanrdunn/voteapp-storage-network-compose-containers/tree/e00bc2ea479a40579e2be242ec7a3042430e6a26/README.md)[_{{{CITATION{{{_4{](https://github.com/abdevm/learning-cloud-computing/tree/e8cd420030b32c04fad70d5b43b9d0bc30242972/terraform-aws%2Fexercises%2Fexercise4%2Fmodules%2Fstorage%2Finstall.sh)
