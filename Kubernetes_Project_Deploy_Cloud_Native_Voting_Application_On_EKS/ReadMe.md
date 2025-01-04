@@ -1,6 +1,6 @@
 # AWS EKS Setup and Deployment
 
-This README provides a step-by-step guide to set up AWS EKS (Elastic Kubernetes Service) and deploy applications using `kubectl`, `aws-cli`, and `eksctl`. **Note**: This README is a supplement to the original `README.md`. I found ways to launch EKS from AWS CLI on EC2, which makes it easier to implement the project.
+This README provides a step-by-step guide to set up AWS EKS (Elastic Kubernetes Service) and deploy applications using `kubectl`, `aws-cli`, and `eksctl`. **Note**: This README is a supplement to the original `README.md`. I discovered methods to launch EKS from AWS CLI on EC2, making project implementation more seamless. For further reference, please follow this YouTube video: https://www.youtube.com/watch?v=SRHvKBYAwtQ
 
 ## Prerequisites
 
