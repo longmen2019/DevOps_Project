@@ -4,5 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/DevSecOps_PipeLine_Proj_Deploy_Netflix_Clone_on_Kubernetes/DevSecOps-Project" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/K8s-voting-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Kubernetes_Project_Deploy_Cloud_Native_Voting_Application_On_EKS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/aws-eks-RGM" vcs="Git" />
   </component>
 </project>
