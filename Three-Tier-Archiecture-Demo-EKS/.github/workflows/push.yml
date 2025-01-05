@@ -1,0 +1,39 @@
+# Define the name of the GitHub Actions workflow
+name: docker-compose-actions-workflow
+
+# Specify the events that trigger the workflow
+on:
+  # Trigger the workflow when a push event occurs
+  push:
+    # Define the branches that the workflow should trigger on
+    branches:
+      - 'master'  # Only trigger on pushes to the master branch
+    # Define the file paths that the workflow should ignore
+    paths-ignore:
+      - 'DCOS/**'  # Ignore changes to files in the DCOS directory and its subdirectories
+      - 'K8s/**'   # Ignore changes to files in the K8s directory and its subdirectories
+      - 'load-gen/**'  # Ignore changes to files in the load-gen directory and its subdirectories
+      - 'OpenShift/**'  # Ignore changes to files in the OpenShift directory and its subdirectories
+      - 'Swarm/**'  # Ignore changes to files in the Swarm directory and its subdirectories
+      # Note: The paths-ignore filter is used to prevent the workflow from triggering on changes to specific files or directories.
+      # This can help to reduce the number of unnecessary workflow runs and improve performance.
+
+# Define the jobs that make up the workflow
+jobs:
+  # Define a job named "test"
+  test:
+    # Specify the type of runner to use for the job
+    runs-on: ubuntu-latest  # Use an Ubuntu-based runner with the latest version
+    # Define the steps that make up the job
+    steps:
+      # Define a step to checkout the code
+      - uses: actions/checkout@v2  # Use the actions/checkout action to checkout the code
+        # Note: The actions/checkout action is used to checkout the repository code and make it available to the workflow.
+        # The @v2 suffix specifies the version of the action to use.
+      # Define a step to build the stack
+      - name: Build the stack  # Give the step a descriptive name
+        # Run a command to build the stack using docker-compose
+        run: docker-compose build  # Run the docker-compose build command
+        # Note: This command will build the Docker images specified in the docker-compose.yml file.
+        # The images will be built using the Docker daemon on the runner.
+        # If the build is successful, the images will be available for use in subsequent steps.
