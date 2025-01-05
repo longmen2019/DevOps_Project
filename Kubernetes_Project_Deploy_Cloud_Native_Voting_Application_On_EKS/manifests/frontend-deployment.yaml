@@ -1,45 +1,99 @@
+# Define the Kubernetes API version
 apiVersion: apps/v1
+# Define the type of Kubernetes object
 kind: Deployment
+# Define the metadata for the Deployment object
 metadata:
+  # Define the name of the Deployment
   name: frontend
+  # Define the namespace where the Deployment will be created
   namespace: nepaltech
+  # Define the labels for the Deployment
   labels:
+    # Define the role label
     role: frontend
+    # Define the environment label
     env: demo
+
+# Define the specification for the Deployment
 spec:
+  # Define the number of replicas for the Deployment
   replicas: 2
+  # Define the update strategy for the Deployment
   strategy:
+    # Define the type of update strategy
     type: RollingUpdate
+    # Define the rolling update strategy
     rollingUpdate:
+      # Define the maximum number of pods that can be created during the update
       maxSurge: 1
+      # Define the maximum number of pods that can be unavailable during the update
       maxUnavailable: 25%
+
+  # Define the selector for the Deployment
   selector:
+    # Define the match labels for the selector
     matchLabels:
+      # Define the role label
       role: frontend
+
+  # Define the template for the Deployment
   template:
+    # Define the metadata for the template
     metadata:
+      # Define the labels for the template
       labels:
+        # Define the role label
         role: frontend
+
+    # Define the specification for the template
     spec:
+      # Define the containers for the template
       containers:
-      - name: frontend
+      - # Define the name of the container
+        name: frontend
+        # Define the image for the container
         image: cloudacademydevops/frontend:v11
+        # Define the image pull policy for the container
         imagePullPolicy: Always
+        # Define the environment variables for the container
         env:
-          - name: REACT_APP_APIHOSTPORT
-            value: $API_ELB_PUBLIC_FQDN #add your API_Load_Balancer DNS manually here if app does not run
+          - # Define the name of the environment variable
+            name: REACT_APP_APIHOSTPORT
+            # Define the value of the environment variable
+            value: $API_ELB_PUBLIC_FQDN
+            # Note: This value should be replaced with the actual public FQDN of the API Load Balancer
+            # If the application does not run, the API Load Balancer DNS should be added manually here
+
+        # Define the ports for the container
         ports:
-        - containerPort: 8080
+        - # Define the container port
+          containerPort: 8080
+
+        # Define the liveness probe for the container
         livenessProbe:
+          # Define the HTTP GET request for the liveness probe
           httpGet:
+            # Define the path of the HTTP GET request
             path: /ok
+            # Define the port of the HTTP GET request
             port: 8080
+          # Define the initial delay for the liveness probe
           initialDelaySeconds: 2
+          # Define the period for the liveness probe
           periodSeconds: 5
+
+        # Define the readiness probe for the container
         readinessProbe:
+          # Define the HTTP GET request for the readiness probe
           httpGet:
-             path: /ok
-             port: 8080
+            # Define the path of the HTTP GET request
+            path: /ok
+            # Define the port of the HTTP GET request
+            port: 8080
+          # Define the initial delay for the readiness probe
           initialDelaySeconds: 5
+          # Define the period for the readiness probe
           periodSeconds: 5
+          # Define the success threshold for the readiness probe
           successThreshold: 1

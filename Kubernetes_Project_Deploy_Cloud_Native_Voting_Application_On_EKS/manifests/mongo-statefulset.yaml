@@ -1,59 +1,115 @@
+# Define the Kubernetes API version
 apiVersion: apps/v1
+# Define the type of Kubernetes object
 kind: StatefulSet
+# Define the metadata for the StatefulSet object
 metadata:
+  # Define the name of the StatefulSet
   name: mongo
+  # Define the namespace where the StatefulSet will be created
   namespace: nepaltech
+
+# Define the specification for the StatefulSet
 spec:
+  # Define the service name for the StatefulSet
   serviceName: mongo
+  # Define the number of replicas for the StatefulSet
   replicas: 3
+  # Define the selector for the StatefulSet
   selector:
+    # Define the match labels for the selector
     matchLabels:
+      # Define the role label
       role: db
+
+  # Define the template for the StatefulSet
   template:
+    # Define the metadata for the template
     metadata:
+      # Define the labels for the template
       labels:
+        # Define the role label
         role: db
+        # Define the environment label
         env: demo
+        # Define the replicaset label
         replicaset: rs0.main
+
+    # Define the specification for the template
     spec:
+      # Define the affinity for the template
       affinity:
+        # Define the pod anti-affinity for the template
         podAntiAffinity:
+          # Define the preferred during scheduling ignored during execution
           preferredDuringSchedulingIgnoredDuringExecution:
+            # Define the weight for the preferred during scheduling ignored during execution
             - weight: 100
+              # Define the pod affinity term for the preferred during scheduling ignored during execution
               podAffinityTerm:
+                # Define the label selector for the pod affinity term
                 labelSelector:
+                  # Define the match expressions for the label selector
                   matchExpressions:
+                    # Define the key for the match expression
                     - key: replicaset
+                      # Define the operator for the match expression
                       operator: In
+                      # Define the values for the match expression
                       values:
+                        # Define the value for the match expression
                         - rs0.main
+                # Define the topology key for the pod affinity term
                 topologyKey: kubernetes.io/hostname
+      # Define the termination grace period seconds for the template
       terminationGracePeriodSeconds: 10
+
+      # Define the containers for the template
       containers:
+        # Define the container for the template
         - name: mongo
+          # Define the image for the container
           image: mongo:4.2
+          # Define the command for the container
           command:
+            # Define the command for the container
             - "numactl"
             - "--interleave=all"
             - "mongod"
+            # Define the arguments for the command
             - "--wiredTigerCacheSizeGB"
             - "0.1"
             - "--bind_ip"
             - "0.0.0.0"
             - "--replSet"
             - "rs0"
+          # Define the ports for the container
           ports:
+            # Define the container port
             - containerPort: 27017
+          # Define the volume mounts for the container
           volumeMounts:
+            # Define the volume mount for the container
             - name: mongodb-persistent-storage-claim
+              # Define the mount path for the volume mount
               mountPath: /data/db
+
+  # Define the volume claim templates for the StatefulSet
   volumeClaimTemplates:
+    # Define the volume claim template for the StatefulSet
     - metadata:
+        # Define the name for the volume claim template
         name: mongodb-persistent-storage-claim
       spec:
+        # Define the access modes for the volume claim template
         accessModes:
+          # Define the access mode for the volume claim template
           - ReadWriteOnce
+        # Define the storage class name for the volume claim template
         storageClassName: gp2
+        # Define the resources for the volume claim template
         resources:
+          # Define the requests for the resources
           requests:
+            # Define the storage request for the resources
             storage: 0.5Gi
