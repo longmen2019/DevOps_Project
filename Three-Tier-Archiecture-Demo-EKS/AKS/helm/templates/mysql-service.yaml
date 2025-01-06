@@ -1,13 +1,39 @@
+# apiVersion: This specifies the API version for the Kubernetes object being defined.
+# In this case, 'v1' is the most common and stable version for most Kubernetes resources.
 apiVersion: v1
+
+# kind: This defines the type of Kubernetes object being created.
+# A 'Service' object is used to expose a set of pods to the network, providing a stable network identity and load balancing.
 kind: Service
+
+# metadata: This section contains metadata about the Service object, such as labels and name.
 metadata:
+  # labels: These are key-value pairs that help identify and categorize the Service object.
+  # In this case, the label 'service: mysql' can be used to select or filter the Service object.
   labels:
     service: mysql
+  # name: This is the unique name for the Service object, which can be used to reference it.
+  # In this case, the name 'mysql' will be used to identify the Service object.
   name: mysql
+
+# spec: This section contains the specification for the Service object, including its configuration and behavior.
 spec:
+  # ports: This section defines the ports that the Service object will expose to the network.
+  # In this case, a single port is defined, but multiple ports can be specified if needed.
   ports:
+  # - name: This is the name of the port, which can be used to identify it.
+  # In this case, the name 'mysql' is used to match the service name.
   - name: mysql
+    # port: This is the port number that the Service object will expose to the network.
+    # In this case, port 3306 is the standard port for MySQL databases.
     port: 3306
+    # targetPort: This is the port number that the Service object will forward traffic to on the selected pods.
+    # In this case, the target port is also 3306, which means that the Service object will forward traffic to the same port on the pods.
     targetPort: 3306
+
+  # selector: This section defines the criteria for selecting pods that the Service object will target.
+  # In this case, the selector 'service: mysql' will match pods with the label 'service: mysql'.
   selector:
+    # service: This is the label key and value that the Service object will use to select pods.
+    # In this case, the label 'service: mysql' will match pods with the same label.
     service: mysql

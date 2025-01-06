@@ -1,64 +1,51 @@
-# Registry and repository for Docker images
-# Default is docker/robotshop/image:latest
-image:
-  repo: robotshop
-  version: latest
-  pullPolicy: IfNotPresent
-
-# EUM configuration
-# Provide your key and set the endpoint
-eum:
-  key: null
-  url: https://eum-eu-west-1.instana.io
-  #url: https://eum-us-west-2.instana.io
-
-# Pod Security Policy
-psp:
-  enabled: false
-
-# For the mini ones minikube, minishift set to true
-nodeport: false
-
-# "special" Openshift. Set to true when deploying to any openshift flavour
-openshift: false
-
-ocCreateRoute: false
-
-######################################
-# Affinities for individual workloads
-# set in the following way:
-# <workload>:
-#   affinity: {}
-#   nodeSelector: {}
-#   tolerations: []
-######################################
-
-cart: {}
-
-catalogue: {}
-
-dispatch: {}
-
-mongodb: {}
-
-mysql: {}
-
-payment:
-  # Alternative payment gateway URL
-  # Default is https://www.paypal.com
-  gateway: null
-  #gateway: https://www.worldpay.com
-
-rabbitmq: {}
-
-ratings: {}
-
-redis:
-  # Storage class to use with redis statefulset.
-  storageClassName: default
-
-shipping: {}
-
-user: {}
-
-web: {}
+apiVersion: apps/v1 # Specifies the API version as 'apps/v1' for the Deployment resource
+kind: Deployment # Defines the kind of object as a Deployment
+metadata:
+  name: user # Sets the name of the Deployment to 'user'
+  labels:
+    service: user # Adds a label 'service' with the value 'user' to the metadata
+spec:
+  replicas: 1 # Specifies that one replica of the pod should be running
+  selector:
+    matchLabels:
+      service: user # Selects pods with the label 'service: user'
+  template:
+    metadata:
+      labels:
+        service: user # Adds a label 'service' with the value 'user' to the pod template
+    spec:
+      {{ if .Values.psp.enabled }} # Checks if PodSecurityPolicy (psp) is enabled in the values file
+      serviceAccountName: robot-shop # Uses the service account named 'robot-shop' for the pods
+      {{ end }}
+      containers:
+      - name: user # Names the container 'user'
+        image: {{ .Values.image.repo }}/rs-user:{{ .Values.image.version }} # Specifies the container image to use, pulled from the repository and version in values file
+        imagePullPolicy: {{ .Values.image.pullPolicy }} # Sets the image pull policy based on values file
+        env:
+          # agent networking access
+          - name: INSTANA_AGENT_HOST # Sets the environment variable 'INSTANA_AGENT_HOST'
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP # References the host IP address of the status field
+        ports:
+        - containerPort: 8080 # Exposes port 8080 on the container
+        resources:
+          limits:
+            cpu: 200m # Limits the CPU usage to 200 milliCPU
+            memory: 100Mi # Limits the memory usage to 100 MiB
+          requests:
+            cpu: 100m # Requests 100 milliCPU to be allocated
+            memory: 50Mi # Requests 50 MiB of memory to be allocated
+      restartPolicy: Always # Ensures that the pods are always restarted if they fail
+      {{- with .Values.user.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }} # Sets the affinity rules based on the values file
+      {{- end }}
+      {{- with .Values.user.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }} # Sets the node selector based on the values file
+      {{- end }}
+      {{- with .Values.user.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }} # Sets the tolerations based on the values file
+      {{- end }}

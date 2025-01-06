@@ -1,58 +1,141 @@
+# apiVersion: This specifies the API version for the Kubernetes object being defined.
+# In this case, 'apps/v1' is the API version for the Deployment object, which is a part of the Kubernetes Apps API.
 apiVersion: apps/v1
+
+# kind: This defines the type of Kubernetes object being created.
+# A 'Deployment' object is used to manage a set of replicas (i.e., multiple copies) of a pod, ensuring that a specified number of replicas are running at any given time.
 kind: Deployment
+
+# metadata: This section contains metadata about the Deployment object, such as its name and labels.
 metadata:
+  # name: This is the unique name for the Deployment object, which can be used to reference it.
+  # In this case, the name 'payment' will be used to identify the Deployment object.
   name: payment
+  # labels: These are key-value pairs that help identify and categorize the Deployment object.
+  # In this case, the labels 'service: payment' and 'stage: prod' can be used to select or filter the Deployment object.
   labels:
     service: payment
     stage: prod
+
+# spec: This section contains the specification for the Deployment object, including its configuration and behavior.
 spec:
+  # replicas: This specifies the number of replicas (i.e., copies) of the pod that the Deployment object should maintain.
+  # In this case, the Deployment object will maintain a single replica of the pod.
   replicas: 1
+
+  # selector: This section defines the criteria for selecting pods that the Deployment object will manage.
+  # In this case, the selector will match pods with the labels 'service: payment' and 'stage: prod'.
   selector:
+    # matchLabels: This specifies the labels that the selector will match.
     matchLabels:
       service: payment
       stage: prod
+
+  # template: This section defines the template for the pods that the Deployment object will create.
   template:
+    # metadata: This section contains metadata about the pod, such as its labels.
     metadata:
+      # labels: These are key-value pairs that help identify and categorize the pod.
+      # In this case, the labels 'service: payment' and 'stage: prod' will be applied to the pod.
       labels:
         service: payment
         stage: prod
+
+    # spec: This section contains the specification for the pod, including its configuration and behavior.
     spec:
+      # This block is a conditional statement that checks if the 'psp.enabled' value is true.
+      # If it is true, the 'serviceAccountName' field will be set to 'robot-shop'.
       {{ if .Values.psp.enabled }}
+      # serviceAccountName: This specifies the name of the service account that the pod will use.
+      # A service account is a resource that provides an identity for a pod, allowing it to authenticate with other resources in the cluster.
       serviceAccountName: robot-shop
       {{ end }}
+
+      # containers: This section defines the containers that will run in the pod.
       containers:
+      # - name: This specifies the name of the container.
+      # In this case, the name 'payment' will be used to identify the container.
       - name: payment
+        # image: This specifies the Docker image that the container will use.
+        # The image is specified using a template, which will be replaced with the actual image name and version.
         image: {{ .Values.image.repo }}/rs-payment:{{ .Values.image.version }}
+        # imagePullPolicy: This specifies the policy for pulling the Docker image.
+        # The policy can be set to 'Always', 'Never', or 'IfNotPresent'.
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        # agent networking access
+
+        # env: This section defines the environment variables that will be set for the container.
         env:
+          # - name: This specifies the name of the environment variable.
+          # In this case, the name 'INSTANA_AGENT_HOST' will be used to identify the variable.
           - name: INSTANA_AGENT_HOST
+            # valueFrom: This specifies the source of the environment variable's value.
+            # In this case, the value will be set to the 'status.hostIP' field of the pod.
             valueFrom:
+              # fieldRef: This specifies the field that the value will be taken from.
               fieldRef:
+                # fieldPath: This specifies the path to the field that the value will be taken from.
                 fieldPath: status.hostIP
+
+          # This block is a conditional statement that checks if the 'payment.gateway' value is set.
+          # If it is set, the 'PAYMENT_GATEWAY' environment variable will be set to the value.
           {{- if .Values.payment.gateway }}
           - name: PAYMENT_GATEWAY
+            # value: This specifies the value of the environment variable.
             value: {{ .Values.payment.gateway }}
           {{- end }}
+
+        # ports: This section defines the ports that the container will expose.
         ports:
+        # - containerPort: This specifies the port number that the container will expose.
+        # In this case, the port number 8080 will be exposed.
         - containerPort: 8080
+
+        # resources: This section defines the resource requests and limits for the container.
         resources:
+          # limits: This section defines the resource limits for the container.
           limits:
+            # cpu: This specifies the CPU limit for the container.
+            # The limit is specified in milliCPU units (e.g., 100m = 0.1 CPU cores).
             cpu: 200m
+            # memory: This specifies the memory limit for the container.
+            # The limit is specified in mebibytes (e.g., 100Mi = 100 mebibytes).
             memory: 100Mi
+          # requests: This section defines the resource requests for the container.
           requests:
+            # cpu: This specifies the CPU request for the container.
+            # The request is specified in milliCPU units (e.g., 100m = 0.1 CPU cores).
             cpu: 100m
+            # memory: This specifies the memory request for the container.
+            # The request is specified in mebibytes (e.g., 50Mi = 50 mebibytes).
             memory: 50Mi
+
+      # restartPolicy: This specifies the restart policy for the pod.
+      # The policy can be set to 'Always', 'Never', or 'OnFailure'.
       restartPolicy: Always
+
+      # This block is a conditional statement that checks if the 'payment.affinity' value is set.
+      # If it is set, the 'affinity' field will be set to the value.
       {{- with .Values.payment.affinity }}
+      # affinity: This specifies the affinity rules for the pod.
       affinity:
+        # This line uses a template function to convert the 'affinity' value to YAML format.
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      # This block is a conditional statement that checks if the 'payment.nodeSelector' value is set.
+      # If it is set, the 'nodeSelector' field will be set to the value.
       {{- with .Values.payment.nodeSelector }}
+      # nodeSelector: This specifies the node selector rules for the pod.
       nodeSelector:
+        # This line uses a template function to convert the 'nodeSelector' value to YAML format.
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      # This block is a conditional statement that checks if the 'payment.tolerations' value is set.
+      # If it is set, the 'tolerations' field will be set to the value.
       {{- with .Values.payment.tolerations }}
+      # tolerations: This specifies the toleration rules for the pod.
       tolerations:
+        # This line uses a template function to convert the 'tolerations' value to YAML format.
         {{- toYaml . | nindent 8 }}
       {{- end }}

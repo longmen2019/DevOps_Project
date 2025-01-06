@@ -1,46 +1,46 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # Specifies the API version as 'apps/v1' for the Deployment resource
+kind: Deployment # Defines the kind of object as a Deployment
 metadata:
-  name: rabbitmq
+  name: rabbitmq # Sets the name of the Deployment to 'rabbitmq'
   labels:
-    service: rabbitmq
+    service: rabbitmq # Adds a label 'service' with the value 'rabbitmq' to the metadata
 spec:
-  replicas: 1
+  replicas: 1 # Specifies that one replica of the pod should be running
   selector:
     matchLabels:
-      service: rabbitmq
+      service: rabbitmq # Selects pods with the label 'service: rabbitmq'
   template:
     metadata:
       labels:
-        service: rabbitmq
+        service: rabbitmq # Adds a label 'service' with the value 'rabbitmq' to the pod template
     spec:
-      {{ if .Values.psp.enabled }}
-      serviceAccountName: robot-shop
+      {{ if .Values.psp.enabled }} # Checks if PodSecurityPolicy (psp) is enabled in the values file
+      serviceAccountName: robot-shop # Uses the service account named 'robot-shop' for the pods
       {{ end }}
       containers:
-      - name: rabbitmq
-        image: rabbitmq:3.7-management-alpine
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - name: rabbitmq # Names the container 'rabbitmq'
+        image: rabbitmq:3.7-management-alpine # Specifies the container image to use
+        imagePullPolicy: {{ .Values.image.pullPolicy }} # Sets the image pull policy based on values file
         ports:
-        - containerPort: 5672
-        - containerPort: 15672
+        - containerPort: 5672 # Exposes port 5672 on the container
+        - containerPort: 15672 # Exposes port 15672 on the container
         resources:
           limits:
-            cpu: 200m
-            memory: 512Mi
+            cpu: 200m # Limits the CPU usage to 200 milliCPU
+            memory: 512Mi # Limits the memory usage to 512 MiB
           requests:
-            cpu: 100m
-            memory: 256Mi
-      restartPolicy: Always
+            cpu: 100m # Requests 100 milliCPU to be allocated
+            memory: 256Mi # Requests 256 MiB of memory to be allocated
+      restartPolicy: Always # Ensures that the pods are always restarted if they fail
       {{- with .Values.rabbitmq.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the affinity rules based on the values file
       {{- end }}
       {{- with .Values.rabbitmq.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the node selector based on the values file
       {{- end }}
       {{- with .Values.rabbitmq.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the tolerations based on the values file
       {{- end }}

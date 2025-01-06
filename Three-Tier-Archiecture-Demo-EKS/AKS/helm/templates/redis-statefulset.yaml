@@ -1,62 +1,61 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # Specifies the API version as 'apps/v1' for the StatefulSet resource
+kind: StatefulSet # Defines the kind of object as a StatefulSet
 metadata:
   labels:
-    service: redis
-  name: redis
+    service: redis # Adds a label 'service' with the value 'redis' to the metadata
+  name: redis # Sets the name of the StatefulSet to 'redis'
 spec:
-  replicas: 1
+  replicas: 1 # Specifies that one replica of the pod should be running
   selector:
     matchLabels:
-      service: redis
-  serviceName: redis
+      service: redis # Selects pods with the label 'service: redis'
+  serviceName: redis # Names the headless service managing this StatefulSet as 'redis'
   template:
     metadata:
       labels:
-        service: redis
+        service: redis # Adds a label 'service' with the value 'redis' to the pod template
     spec:
-      {{ if .Values.psp.enabled }}
-      serviceAccountName: robot-shop
+      {{ if .Values.psp.enabled }} # Checks if PodSecurityPolicy (psp) is enabled in the values file
+      serviceAccountName: robot-shop # Uses the service account named 'robot-shop' for the pods
       {{ end }}
       containers:
-      - name: redis
-        image: redis:4.0.6
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - name: redis # Names the container 'redis'
+        image: redis:4.0.6 # Specifies the container image to use, Redis version 4.0.6
+        imagePullPolicy: {{ .Values.image.pullPolicy }} # Sets the image pull policy based on values file
         ports:
-        - containerPort: 6379
+        - containerPort: 6379 # Exposes port 6379 on the container
         volumeMounts:
-          - name: data
-            mountPath: /mnt/redis
+          - name: data # Defines a volume named 'data'
+            mountPath: /mnt/redis # Mounts the 'data' volume at /mnt/redis inside the container
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
+            cpu: 200m # Limits the CPU usage to 200 milliCPU
+            memory: 100Mi # Limits the memory usage to 100 MiB
           requests:
-            cpu: 100m
-            memory: 50Mi
-      restartPolicy: Always
+            cpu: 100m # Requests 100 milliCPU to be allocated
+            memory: 50Mi # Requests 50 MiB of memory to be allocated
+      restartPolicy: Always # Ensures that the pods are always restarted if they fail
       {{- with .Values.redis.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the affinity rules based on the values file
       {{- end }}
       {{- with .Values.redis.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the node selector based on the values file
       {{- end }}
       {{- with .Values.redis.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the tolerations based on the values file
       {{- end }}
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: data # Sets the name of the volume claim template to 'data'
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes: [ "ReadWriteOnce" ] # Allows the volume to be mounted as read-write by a single node
         {{ if not .Values.openshift }}
-        storageClassName: default
-        volumeMode: Filesystem
+        storageClassName: default # Sets the storage class to 'default' (if not on OpenShift)
+        volumeMode: Filesystem # Sets the volume mode to 'Filesystem'
         {{ end }}
         resources:
           requests:
-            storage: 1Gi
-
+            storage: 1Gi # Requests 1 GiB of storage for the volume

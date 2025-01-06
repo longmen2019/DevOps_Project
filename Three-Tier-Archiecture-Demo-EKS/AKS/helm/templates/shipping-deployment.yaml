@@ -1,54 +1,158 @@
+# apiVersion: This specifies the API version for the Kubernetes object being defined.
+# In this case, 'apps/v1' is the API version for the Deployment object, which is a part of the Kubernetes Apps API.
+# The 'apps/v1' API version is used for Deployments, ReplicaSets, and other application-related resources.
 apiVersion: apps/v1
+
+# kind: This defines the type of Kubernetes object being created.
+# A 'Deployment' object is used to manage a set of replicas (i.e., multiple copies) of a pod, ensuring that a specified number of replicas are running at any given time.
+# Deployments are a crucial component of Kubernetes, as they provide a way to manage and scale applications.
 kind: Deployment
+
+# metadata: This section contains metadata about the Deployment object, such as its name and labels.
+# Metadata is used to identify and categorize Kubernetes objects, making it easier to manage and query them.
 metadata:
+  # name: This is the unique name for the Deployment object, which can be used to reference it.
+  # In this case, the name 'shipping' will be used to identify the Deployment object.
+  # Deployment names must be unique within a namespace, and must conform to DNS label standards.
   name: shipping
+  # labels: These are key-value pairs that help identify and categorize the Deployment object.
+  # Labels are used to filter and select Kubernetes objects, making it easier to manage and query them.
+  # In this case, the label 'service: shipping' can be used to select or filter the Deployment object.
   labels:
     service: shipping
+
+# spec: This section contains the specification for the Deployment object, including its configuration and behavior.
+# The spec section is used to define the desired state of the Deployment object, and is used by Kubernetes to create and manage the object.
 spec:
+  # replicas: This specifies the number of replicas (i.e., copies) of the pod that the Deployment object should maintain.
+  # In this case, the Deployment object will maintain a single replica of the pod.
+  # The number of replicas can be adjusted to scale the application up or down.
   replicas: 1
+
+  # selector: This section defines the criteria for selecting pods that the Deployment object will manage.
+  # The selector is used to identify the pods that the Deployment object will target, and is a crucial component of Kubernetes.
   selector:
+    # matchLabels: This specifies the labels that the selector will match.
+    # In this case, the selector will match pods with the label 'service: shipping'.
+    # Label selectors are used to filter and select Kubernetes objects, making it easier to manage and query them.
     matchLabels:
       service: shipping
+
+  # template: This section defines the template for the pods that the Deployment object will create.
+  # The template is used to define the configuration and behavior of the pods, and is a crucial component of Kubernetes.
   template:
+    # metadata: This section contains metadata about the pod, such as its labels.
+    # Metadata is used to identify and categorize Kubernetes objects, making it easier to manage and query them.
     metadata:
+      # labels: These are key-value pairs that help identify and categorize the pod.
+      # In this case, the label 'service: shipping' will be applied to the pod.
+      # Labels are used to filter and select Kubernetes objects, making it easier to manage and query them.
       labels:
         service: shipping
+
+    # spec: This section contains the specification for the pod, including its configuration and behavior.
+    # The spec section is used to define the desired state of the pod, and is used by Kubernetes to create and manage the pod.
     spec:
+      # This block is a conditional statement that checks if the 'psp.enabled' value is true.
+      # If it is true, the 'serviceAccountName' field will be set to 'robot-shop'.
+      # This is used to specify the service account that the pod will use to authenticate with other resources in the cluster.
       {{ if .Values.psp.enabled }}
+      # serviceAccountName: This specifies the name of the service account that the pod will use.
+      # Service accounts are used to authenticate and authorize pods to access other resources in the cluster.
       serviceAccountName: robot-shop
       {{ end }}
+
+      # containers: This section defines the containers that will run in the pod.
+      # Containers are used to package and run applications, and are a crucial component of Kubernetes.
       containers:
-      - name: shipping
-        image: {{ .Values.image.repo }}/rs-shipping:{{ .Values.image.version }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: 8080
-        # it's Java it needs lots of memory
-        resources:
-          limits:
-            cpu: 200m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 500Mi
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          failureThreshold: 30
-          successThreshold: 1
+        # - name: This specifies the name of the container.
+        # In this case, the name 'shipping' will be used to identify the container.
+        # Container names must be unique within a pod, and must conform to DNS label standards.
+        - name: shipping
+          # image: This specifies the Docker image that the container will use.
+          # The image is specified using a template, which will be replaced with the actual image name and version.
+          # Docker images are used to package and run applications, and are a crucial component of Kubernetes.
+          image: {{ .Values.image.repo }}/rs-shipping:{{ .Values.image.version }}
+          # imagePullPolicy: This specifies the policy for pulling the Docker image.
+          # The policy can be set to 'Always', 'Never', or 'IfNotPresent'.
+          # This determines how often the image is pulled from the registry.
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # ports: This section defines the ports that the container will expose.
+          # Ports are used to allow traffic to flow into the container, and are a crucial component of Kubernetes networking.
+          ports:
+            # - containerPort: This specifies the port number that the container will expose.
+            # In this case, the port number 8080 will be exposed.
+            # Port numbers must be in the range 0-65535, and must not conflict with other ports in the same container.
+            - containerPort: 8080
+
+          # resources: This section defines the resource requests and limits for the container.
+          # Resources are used to manage the compute resources (e.g., CPU, memory) that the container uses.
+          # This is used to ensure that the container has enough resources to run efficiently.
+          resources:
+            # limits: This section defines the resource limits for the container.
+            # Limits are used to specify the maximum amount of resources that the container can use.
+            # This is used to prevent the container from using too many resources and affecting other containers in the cluster.
+            limits:
+              # cpu: This specifies the CPU limit for the container.
+              # The limit is specified in milliCPU units (e.g., 200m = 0.2 CPU cores).
+              # This determines how much CPU the container can use.
+              cpu: 200m
+              # memory: This specifies the memory limit for the container.
+              # The limit is specified in mebibytes (e.g., 1000Mi = 1000 mebibytes).
+              # This determines how much memory the container can use.
+              # Note: The comment "it's Java it needs lots of memory" suggests that the container is running a Java application, which typically requires more memory than other types of applications.
+              memory: 1000Mi
+            # requests: This section defines the resource requests for the container.
+            # Requests are used to specify the amount of resources that the container needs to run efficiently.
+            # This is used to ensure that the container has enough resources to run efficiently.
+            requests:
+              # cpu: This specifies the CPU request for the container.
+              # The request is specified in milliCPU units (e.g., 100m = 0.1 CPU cores).
+              # This determines how much CPU the container needs to run efficiently.
+              cpu: 100m
+              # memory: This specifies the memory request for the container.
+              # The request is specified in mebibytes (e.g., 500Mi = 500 mebibytes).
+              # This determines how much memory the container needs to run efficiently.
+              memory: 500Mi
+
+          # readinessProbe: This section defines the readiness probe for the container.
+          # A readiness probe is used to determine whether the container is ready to receive traffic.
+          # This is used to ensure that the container is healthy and functioning correctly before allowing traffic to flow into it.
+          readinessProbe:
+            # httpGet: This specifies the HTTP GET request that the probe will send to the container.
+            # The request is sent to the specified path and port on the container.
+            httpGet:
+              # path: This specifies the path of the HTTP GET request.
+              # In this case, the path is '/health'.
+              # This determines the URL that the probe will send the request to.
+              path: /health
+              # port: This specifies the port number of the HTTP GET request.
+              # In this case, the port number is 8080.
+              # This determines the port that the probe will send the request to.
+              port: 8080
+            # initialDelaySeconds: This specifies the initial delay before the probe is sent.
+            # The delay is specified in seconds (e.g., 5 = 5 seconds).
+            # This determines how long the probe will wait before sending the request.
+            initialDelaySeconds: 5
+            # periodSeconds: This specifies the period between probes.
+            # The period is specified in seconds (e.g., 5 = 5 seconds).
+            # This determines how often the probe will send the request.
+            periodSeconds: 5
+            # failureThreshold: This specifies the number of consecutive failures before the probe is considered failed.
+            # The threshold is specified as a positive integer (e.g., 30 = 30 consecutive failures).
+            # This determines how many times the probe can fail before the container is considered unhealthy.
+            failureThreshold: 30
+            # successThreshold: This specifies the number of consecutive successes before the probe is considered successful.
+            # The threshold is specified as a positive integer (e.g., 1 = 1 consecutive success).
+            # This determines how many times the probe must succeed before the container is considered healthy.
+            successThreshold: 1
+
+      # restartPolicy: This specifies the restart policy for the container.
+      # The policy can be set to 'Always', 'Never', or 'OnFailure'.
+      # This determines what happens to the container if it fails or exits.
       restartPolicy: Always
-      {{- with .Values.shipping.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.shipping.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.shipping.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+
+      # This block is a conditional statement that checks if the 'shipping.affinity' value is set.
+      # If it is set, the 'affinity' field will be set to the value.
+      # Af​

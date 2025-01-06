@@ -1,26 +1,26 @@
-{{ if .Values.psp.enabled }}
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
+{{ if .Values.psp.enabled }} # Checks if PodSecurityPolicy (psp) is enabled in the values file
+apiVersion: policy/v1beta1 # Specifies the API version of the PodSecurityPolicy
+kind: PodSecurityPolicy # Defines the kind of object as a PodSecurityPolicy
 metadata:
-  name: robot-shop
+  name: robot-shop # Sets the name of the PodSecurityPolicy to 'robot-shop'
 spec:
-  allowPrivilegeEscalation: false
+  allowPrivilegeEscalation: false # Prevents processes from escalating privileges
   fsGroup:
-    rule: RunAsAny
-  privileged: false
+    rule: RunAsAny # Allows any fsGroup to be specified
+  privileged: false # Ensures that no privileged containers are allowed
   runAsUser:
-    rule: RunAsAny
+    rule: RunAsAny # Allows any user to run the container
   seLinux:
-    rule: RunAsAny
+    rule: RunAsAny # Allows any SELinux context to be specified
   supplementalGroups:
-    rule: RunAsAny
+    rule: RunAsAny # Allows any supplemental groups to be specified
   allowedCapabilities:
-  - 'NET_ADMIN'
+  - 'NET_ADMIN' # Allows the container to add the 'NET_ADMIN' capability
   volumes:
-  - configMap
-  - downwardAPI
-  - emptyDir
-  - persistentVolumeClaim
-  - secret
-  - projected
-{{ end }}
+  - configMap # Allows the use of ConfigMap volumes
+  - downwardAPI # Allows the use of DownwardAPI volumes
+  - emptyDir # Allows the use of EmptyDir volumes
+  - persistentVolumeClaim # Allows the use of PersistentVolumeClaim volumes
+  - secret # Allows the use of Secret volumes
+  - projected # Allows the use of Projected volumes
+{{ end }} # End of the conditional block for psp.enabled

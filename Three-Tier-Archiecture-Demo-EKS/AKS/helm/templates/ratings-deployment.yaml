@@ -1,53 +1,53 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # Specifies the API version as 'apps/v1' for the Deployment resource
+kind: Deployment # Defines the kind of object as a Deployment
 metadata:
-  name: ratings
+  name: ratings # Sets the name of the Deployment to 'ratings'
   labels:
-    service: ratings
+    service: ratings # Adds a label 'service' with the value 'ratings' to the metadata
 spec:
-  replicas: 1
+  replicas: 1 # Specifies that one replica of the pod should be running
   selector:
     matchLabels:
-      service: ratings
+      service: ratings # Selects pods with the label 'service: ratings'
   template:
     metadata:
       labels:
-        service: ratings
+        service: ratings # Adds a label 'service' with the value 'ratings' to the pod template
     spec:
-      {{ if .Values.psp.enabled }}
-      serviceAccountName: robot-shop
+      {{ if .Values.psp.enabled }} # Checks if PodSecurityPolicy (psp) is enabled in the values file
+      serviceAccountName: robot-shop # Uses the service account named 'robot-shop' for the pods
       {{ end }}
       containers:
-      - name: ratings
-        image: {{ .Values.image.repo }}/rs-ratings:{{ .Values.image.version }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - name: ratings # Names the container 'ratings'
+        image: {{ .Values.image.repo }}/rs-ratings:{{ .Values.image.version }} # Specifies the container image to use, pulled from the repository and version in values file
+        imagePullPolicy: {{ .Values.image.pullPolicy }} # Sets the image pull policy based on values file
         ports:
-        - containerPort: 80
+        - containerPort: 80 # Exposes port 80 on the container
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
+            cpu: 200m # Limits the CPU usage to 200 milliCPU
+            memory: 100Mi # Limits the memory usage to 100 MiB
           requests:
-            cpu: 100m
-            memory: 50Mi
+            cpu: 100m # Requests 100 milliCPU to be allocated
+            memory: 50Mi # Requests 50 MiB of memory to be allocated
         readinessProbe:
           httpGet:
-            path: /_health
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          failureThreshold: 30
-          successThreshold: 1
-      restartPolicy: Always
+            path: /_health # Defines the health check path as '/_health'
+            port: 80 # Specifies the port for the health check as 80
+          initialDelaySeconds: 5 # Waits 5 seconds before performing the first health check
+          periodSeconds: 5 # Performs the health check every 5 seconds
+          failureThreshold: 30 # Marks the pod as unhealthy after 30 failed health checks
+          successThreshold: 1 # Considers the pod healthy after 1 successful health check
+      restartPolicy: Always # Ensures that the pods are always restarted if they fail
       {{- with .Values.ratings.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the affinity rules based on the values file
       {{- end }}
       {{- with .Values.ratings.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the node selector based on the values file
       {{- end }}
       {{- with .Values.ratings.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Sets the tolerations based on the values file
       {{- end }}
