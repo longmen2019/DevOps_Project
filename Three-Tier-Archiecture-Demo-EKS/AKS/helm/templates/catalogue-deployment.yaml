@@ -1,50 +1,107 @@
+# Define the API version for the Kubernetes Deployment resource
 apiVersion: apps/v1
+# Specify that this is a Deployment resource
 kind: Deployment
+# Define the metadata for the Deployment
 metadata:
+  # Set the name of the Deployment to "catalogue"
+  # This name will be used to identify the Deployment in the Kubernetes cluster
   name: catalogue
+  # Add labels to the Deployment for easier identification and filtering
   labels:
+    # Set the service label to "catalogue"
+    # This label will be used to identify the Deployment and its associated pods
     service: catalogue
+# Define the specification for the Deployment
 spec:
+  # Set the number of replicas for the Deployment to 1
+  # This means that the Deployment will maintain a single pod at all times
   replicas: 1
+  # Define the selector for the Deployment
+  # The selector is used to identify the pods that the Deployment will manage
   selector:
+    # Specify that the Deployment should match pods with the label "service: catalogue"
     matchLabels:
+      # Set the service label to "catalogue"
+      # This label must match the label specified in the metadata section
       service: catalogue
+  # Define the template for the Deployment
   template:
+    # Define the metadata for the template
     metadata:
+      # Add labels to the template for easier identification and filtering
       labels:
+        # Set the service label to "catalogue"
+        # This label must match the label specified in the metadata section
         service: catalogue
+    # Define the specification for the template
     spec:
+      # Conditionally include the serviceAccountName field if PSP (Pod Security Policy) is enabled
       {{ if .Values.psp.enabled }}
+      # Set the service account name to "robot-shop" for the Deployment
+      # This service account will be used to authenticate the pods in the Deployment
       serviceAccountName: robot-shop
       {{ end }}
+      # Define the containers for the Deployment
       containers:
-      - name: catalogue
-        image: {{ .Values.image.repo }}/rs-catalogue:{{ .Values.image.version }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        env:
-          - name: INSTANA_AGENT_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            cpu: 200m
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 50Mi
+        # Define a single container named "catalogue"
+        - name: catalogue
+          # Set the image for the container to the value of .Values.image.repo/rs-catalogue:.Values.image.version
+          # This image will be used to create the container
+          image: {{ .Values.image.repo }}/rs-catalogue:{{ .Values.image.version }}
+          # Set the image pull policy for the container to the value of .Values.image.pullPolicy
+          # This policy determines how the image is pulled from the registry
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # Define environment variables for the container
+          env:
+            # Define a single environment variable named "INSTANA_AGENT_HOST"
+            - name: INSTANA_AGENT_HOST
+              # Set the value of the environment variable to the host IP of the node
+              # This is used to configure the Instana agent
+              valueFrom:
+                # Reference the host IP field of the node status
+                fieldRef:
+                  # Set the field path to "status.hostIP"
+                  fieldPath: status.hostIP
+          # Define the ports for the container
+          ports:
+            # Expose port 8080 from the container
+            - containerPort: 8080
+          # Define the resource requests and limits for the container
+          resources:
+            # Define the resource limits for the container
+            limits:
+              # Set the CPU limit to 200m (200 millicores)
+              cpu: 200m
+              # Set the memory limit to 100Mi (100 mebibytes)
+              memory: 100Mi
+            # Define the resource requests for the container
+            requests:
+              # Set the CPU request to 100m (100 millicores)
+              cpu: 100m
+              # Set the memory request to 50Mi (50 mebibytes)
+              memory: 50Mi
+      # Set the restart policy for the Deployment to "Always"
+      # This means that the Deployment will always restart the pods if they fail
       restartPolicy: Always
+      # Conditionally include the affinity field if it is defined in .Values.catalogue.affinity
       {{- with .Values.catalogue.affinity }}
+      # Define the affinity for the Deployment
       affinity:
+        # Convert the affinity value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      # Conditionally include the nodeSelector field if it is defined in .Values.catalogue.nodeSelector
       {{- with .Values.catalogue.nodeSelector }}
+      # Define the node selector for the Deployment
       nodeSelector:
+        # Convert the node selector value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      # Conditionally include the tolerations field if it is defined in .Values.catalogue.tolerations
       {{- with .Values.catalogue.tolerations }}
+      # Define the tolerations for the Deployment
       tolerations:
+        # Convert the tolerations value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}

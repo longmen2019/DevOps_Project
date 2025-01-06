@@ -1,13 +1,21 @@
 apiVersion: v1
+# Specifies the API version for the Kubernetes object. Here, it uses 'v1' for core API group objects.
 kind: Service
+# Defines the type of Kubernetes object being created, which in this case is a 'Service'.
 metadata:
   labels:
     service: mongodb
+    # Labels are key-value pairs that categorize objects. Here, it labels the service with 'service: mongodb'.
   name: mongodb
+  # Specifies the metadata for the Service, with a unique name 'mongodb'.
 spec:
   ports:
   - name: mongo
+    # Names the port configuration 'mongo'. This is an arbitrary name and can be used for identification.
     port: 27017
+    # Specifies the port that will be exposed by the service. Here, it sets the port to '27017', the default port for MongoDB.
     targetPort: 27017
+    # Specifies the target port on the pods to which traffic should be directed. Here, it is set to '27017'.
   selector:
     service: mongodb
+    # The selector defines how the Service finds which Pods to manage. Here, it matches Pods with the label 'service: mongodb'.

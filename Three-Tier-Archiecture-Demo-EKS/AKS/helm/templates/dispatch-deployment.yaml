@@ -1,49 +1,70 @@
 apiVersion: apps/v1
+# Specifies the API version for the Kubernetes object. Here, it uses the 'apps/v1' API version for deploying applications.
 kind: Deployment
+# Defines the type of Kubernetes object being created, which in this case is a 'Deployment'.
 metadata:
   name: dispatch
+  # Specifies the metadata for the Deployment, with a unique name 'dispatch'.
   labels:
     service: dispatch
+    # Labels are key-value pairs that categorize objects. Here, it labels the deployment with 'service: dispatch'.
 spec:
   replicas: 1
+  # Specifies the number of desired pod replicas. Here, it sets the number of replicas to 1.
   selector:
     matchLabels:
       service: dispatch
+      # The selector defines how the Deployment finds which Pods to manage. Here, it matches Pods with the label 'service: dispatch'.
   template:
     metadata:
       labels:
         service: dispatch
+        # Metadata for the Pod template, labels it with 'service: dispatch'.
     spec:
       {{ if .Values.psp.enabled }}
+      # Checks if Pod Security Policies (PSPs) are enabled in the Helm values file.
       serviceAccountName: robot-shop
+      # Specifies the service account to be used by the Pods. Here, it uses the 'robot-shop' service account.
       {{ end }}
       containers:
       - name: dispatch
+        # Defines a container named 'dispatch'.
         image: {{ .Values.image.repo }}/rs-dispatch:{{ .Values.image.version }}
+        # Specifies the container image to be used. The repository and version are provided through Helm values.
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        # Specifies the image pull policy, defined in the Helm values.
         env:
-          # agent networking access
+          # Defines environment variables for the container.
           - name: INSTANA_AGENT_HOST
+            # Environment variable 'INSTANA_AGENT_HOST'.
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
+                # Sets the value of 'INSTANA_AGENT_HOST' to the host IP address of the node running the pod.
         resources:
+          # Specifies resource requests and limits for the container.
           limits:
             cpu: 200m
             memory: 100Mi
+            # Limits define the maximum amount of CPU and memory the container can use.
           requests:
             cpu: 100m
             memory: 50Mi
+            # Requests define the guaranteed amount of CPU and memory for the container.
       restartPolicy: Always
+      # Specifies the restart policy for the Pod. 'Always' means the Pod will always be restarted if it fails.
       {{- with .Values.dispatch.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
+        # Sets the affinity rules for the Pod, defined in the Helm values.
       {{- end }}
       {{- with .Values.dispatch.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+        # Sets the node selector for the Pod, defined in the Helm values.
       {{- end }}
       {{- with .Values.dispatch.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+        # Sets the tolerations for the Pod, defined in the Helm values.
       {{- end }}

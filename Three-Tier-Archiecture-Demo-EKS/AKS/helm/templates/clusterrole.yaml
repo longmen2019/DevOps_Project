@@ -1,15 +1,26 @@
 {{ if .Values.psp.enabled }}
+# This line checks if Pod Security Policies (PSPs) are enabled in the Helm values file.
+# The '.Values.psp.enabled' is a placeholder that will be replaced with the actual value during the Helm template rendering process.
 apiVersion: rbac.authorization.k8s.io/v1
+# Specifies the API version for the Kubernetes object. Here, it's using the 'rbac.authorization.k8s.io/v1' API group for RBAC (Role-Based Access Control) resources.
 kind: ClusterRole
+# Defines the type of Kubernetes object being created, which in this case is a 'ClusterRole'.
 metadata:
   name: robot-shop
+  # Specifies the metadata for the ClusterRole, with a unique name 'robot-shop'.
 rules:
+# Lists the rules that define the permissions for this ClusterRole.
 - apiGroups:
   - policy
+  # Specifies the API group to which the rule applies. Here, it targets the 'policy' API group.
   resourceNames:
   - robot-shop
+  # Specifies the names of the resources within the 'policy' API group to which the rule applies. Here, it targets the 'robot-shop' resource.
   resources:
   - podsecuritypolicies
+  # Specifies the type of resources within the 'policy' API group. Here, it's 'podsecuritypolicies'.
   verbs:
   - use
+  # Specifies the operations that are allowed on the resources. Here, the 'use' verb allows using the specified Pod Security Policy.
 {{ end }}
+# This line ends the conditional block that checks if PSPs are enabled.

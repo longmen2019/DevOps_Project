@@ -1,50 +1,94 @@
+# Define the API version for the Kubernetes deployment
 apiVersion: apps/v1
+# Specify that this is a Deployment resource
 kind: Deployment
+# Define the metadata for the Deployment
 metadata:
+  # Set the name of the Deployment to "cart"
   name: cart
+  # Add labels to the Deployment for easier identification and filtering
   labels:
+    # Set the service label to "cart"
     service: cart
+# Define the specification for the Deployment
 spec:
+  # Set the number of replicas for the Deployment to 1
   replicas: 1
+  # Define the selector for the Deployment
   selector:
+    # Specify that the Deployment should match pods with the label "service: cart"
     matchLabels:
+      # Set the service label to "cart"
       service: cart
+  # Define the template for the Deployment
   template:
+    # Define the metadata for the template
     metadata:
+      # Add labels to the template for easier identification and filtering
       labels:
+        # Set the service label to "cart"
         service: cart
+    # Define the specification for the template
     spec:
+      # Conditionally include the serviceAccountName field if PSP (Pod Security Policy) is enabled
       {{ if .Values.psp.enabled }}
+      # Set the service account name to "robot-shop" for the Deployment
       serviceAccountName: robot-shop
       {{ end }}
+      # Define the containers for the Deployment
       containers:
+      # Define a single container named "cart"
       - name: cart
+        # Set the image for the container to the value of .Values.image.repo/rs-cart:.Values.image.version
         image: {{ .Values.image.repo }}/rs-cart:{{ .Values.image.version }}
+        # Set the image pull policy for the container to the value of .Values.image.pullPolicy
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        # agent networking access
+        # Define environment variables for the container
         env:
+          # Define a single environment variable named "INSTANA_AGENT_HOST"
           - name: INSTANA_AGENT_HOST
+            # Set the value of the environment variable to the host IP of the node
             valueFrom:
+              # Reference the host IP field of the node status
               fieldRef:
+                # Set the field path to "status.hostIP"
                 fieldPath: status.hostIP
+        # Define the ports for the container
         ports:
-        - containerPort: 8080
+          # Expose port 8080 from the container
+          - containerPort: 8080
+        # Define the resource requests and limits for the container
         resources:
+          # Define the resource limits for the container
           limits:
+            # Set the CPU limit to 200m (200 millicores)
             cpu: 200m
+            # Set the memory limit to 100Mi (100 mebibytes)
             memory: 100Mi
+          # Define the resource requests for the container
           requests:
+            # Set the CPU request to 100m (100 millicores)
             cpu: 100m
+            # Set the memory request to 50Mi (50 mebibytes)
             memory: 50Mi
+      # Conditionally include the affinity field if it is defined in .Values.cart.affinity
       {{- with .Values.cart.affinity }}
+      # Define the affinity for the Deployment
       affinity:
+        # Convert the affinity value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      # Conditionally include the nodeSelector field if it is defined in .Values.cart.nodeSelector
       {{- with .Values.cart.nodeSelector }}
+      # Define the node selector for the Deployment
       nodeSelector:
+        # Convert the node selector value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      # Conditionally include the tolerations field if it is defined in .Values.cart.tolerations
       {{- with .Values.cart.tolerations }}
+      # Define the tolerations for the Deployment
       tolerations:
+        # Convert the tolerations value to YAML and indent it 8 spaces
         {{- toYaml . | nindent 8 }}
       {{- end }}

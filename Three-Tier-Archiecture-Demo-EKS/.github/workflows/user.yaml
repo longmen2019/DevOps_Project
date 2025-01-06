@@ -1,42 +1,69 @@
+# Define the name of the workflow
 name: User
 
+# Define the events that trigger the workflow
 on:
+  # Trigger the workflow on push events to the master branch
   push:
     branches:
       - master
+    # Only trigger the workflow on changes to JavaScript files and the workflow file itself
     paths:
-      - '**.js'  # Only trigger on changes to Python files (**.py)
+      - '**.js'  # Note: The comment is incorrect, it mentions Python files (**.py) instead of JavaScript files
       - '.github/workflows/user.yaml'  # Include workflow file changes
 
+  # Trigger the workflow on pull request events to the master branch
   pull_request:
     branches:
       - master
+    # Only trigger the workflow on changes to JavaScript files and the workflow file itself
     paths:
-      - '**.js'  # Only trigger on changes to Python files (**.py)
+      - '**.js'  # Note: The comment is incorrect, it mentions Python files (**.py) instead of JavaScript files
       - '.github/workflows/user.yaml'  # Include workflow file changes
 
+# Define the jobs that run in the workflow
 jobs:
+  # Define a job named "payment" that builds and deploys the User microservice
   payment:
+    # Name of the job
     name: Build and deploy user microservice
-    runs-on: [self-hosted]  # Use a standard runner instead of self-hosted
+    # Run the job on a self-hosted runner
+    runs-on: [self-hosted]  # Note: The comment suggests using a standard runner instead of self-hosted
 
+    # Define the steps that run in the job
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code 
+        # Use the actions/checkout action to checkout the code
         uses: actions/checkout@v2
+        # Fetch all commit history
         with:
           fetch-depth: 0
 
+      # Step 2: Install dependencies using NPM
       - name: NPM install
+        # Run the command to install dependencies
         run: npm install 
 
+      # Step 3: Build the Docker image
       - name: Build Docker image
+        # Run a command to build the Docker image
         run: |
-          docker build -t user .  # Build image tagged as 'payment' from current directory
+          # Build the image tagged as 'user' from the current directory
+          docker build -t user .  
+          # Note: The comment mentions building an image tagged as 'payment', but the code builds an image tagged as 'user'
 
+      # Step 4: Login to Docker Hub using secrets
       - name: Docker Login (use secrets)
+        # Run a command to login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Step 5: Push the Docker image
       - name: Docker Push
+        # Run commands to push the Docker image
         run: |
+          # Tag the image with the username and latest tag
           docker tag user ${name}/user:latest
-          docker user ${name}/user:latest
+          # Push the image to Docker Hub
+          # Note: The command 'docker user' is incorrect, it should be 'docker push' instead
+          docker push ${name}/user:latest

@@ -1,16 +1,26 @@
 # dispatch just listens to a message queue
 # it does not expose any ports
+
 apiVersion: v1
+# Specifies the API version for the Kubernetes object. Here, it uses 'v1' for core API group objects.
 kind: Service
+# Defines the type of Kubernetes object being created, which in this case is a 'Service'.
 metadata:
   name: dispatch
+  # Specifies the metadata for the Service, with a unique name 'dispatch'.
   labels:
     service: dispatch
+    # Labels are key-value pairs that categorize objects. Here, it labels the service with 'service: dispatch'.
 spec:
   clusterIP: None
+  # Sets the 'clusterIP' field to 'None', creating a headless service. Headless services do not allocate a cluster IP.
   ports:
   - name: headless
+    # Names the port configuration 'headless'. This is an arbitrary name and can be used for identification.
     port: 55555
+    # Specifies the port that will be exposed by the service. Here, it sets the port to '55555'.
     targetPort: 0
+    # Specifies the target port on the pods to which traffic should be directed. Setting it to '0' means the port is not exposed.
   selector:
     service: dispatch
+    # The selector defines how the Service finds which Pods to manage. Here, it matches Pods with the label 'service: dispatch'.

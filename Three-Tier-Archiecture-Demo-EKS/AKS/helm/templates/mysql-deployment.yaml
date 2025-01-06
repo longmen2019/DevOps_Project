@@ -1,49 +1,70 @@
 apiVersion: apps/v1
+# Specifies the API version for the Kubernetes object. Here, it uses 'apps/v1' for deploying applications.
 kind: Deployment
+# Defines the type of Kubernetes object being created, which in this case is a 'Deployment'.
 metadata:
   name: mysql
+  # Specifies the metadata for the Deployment, with a unique name 'mysql'.
   labels:
     service: mysql
+    # Labels are key-value pairs that categorize objects. Here, it labels the deployment with 'service: mysql'.
 spec:
   replicas: 1
+  # Specifies the number of desired pod replicas. Here, it sets the number of replicas to 1.
   selector:
     matchLabels:
       service: mysql
+      # The selector defines how the Deployment finds which Pods to manage. Here, it matches Pods with the label 'service: mysql'.
   template:
     metadata:
       labels:
         service: mysql
+        # Metadata for the Pod template, labels it with 'service: mysql'.
     spec:
       {{ if .Values.psp.enabled }}
+      # Checks if Pod Security Policies (PSPs) are enabled in the Helm values file.
       serviceAccountName: robot-shop
+      # Specifies the service account to be used by the Pods. Here, it uses the 'robot-shop' service account.
       {{ end }}
       containers:
       - name: mysql
+        # Defines a container named 'mysql'.
         image: {{ .Values.image.repo }}/rs-mysql-db:{{ .Values.image.version }}
+        # Specifies the container image to be used. The repository and version are provided through Helm values.
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        # Specifies the image pull policy, defined in the Helm values.
         # added for Istio
         securityContext:
           capabilities:
             add: ["NET_ADMIN"]
+            # Adds the 'NET_ADMIN' capability to the container for network administration tasks, useful when Istio is used.
         ports:
         - containerPort: 3306
+        # Exposes port 3306 on the container, which is the default port for MySQL.
         resources:
+          # Specifies resource requests and limits for the container.
           limits:
             cpu: 200m
             memory: 1024Mi
+            # Limits define the maximum amount of CPU and memory the container can use.
           requests:
             cpu: 100m
             memory: 700Mi
+            # Requests define the guaranteed amount of CPU and memory for the container.
       restartPolicy: Always
+      # Specifies the restart policy for the Pod. 'Always' means the Pod will always be restarted if it fails.
       {{- with .Values.mysql.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
+        # Sets the affinity rules for the Pod, defined in the Helm values.
       {{- end }}
       {{- with .Values.mysql.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+        # Sets the node selector for the Pod, defined in the Helm values.
       {{- end }}
       {{- with .Values.mysql.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+        # Sets the tolerations for the Pod, defined in the Helm values.
       {{- end }}

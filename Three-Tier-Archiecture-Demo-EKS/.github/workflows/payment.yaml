@@ -1,42 +1,67 @@
+# Define the name of the workflow
 name: Payment
 
+# Define the events that trigger the workflow
 on:
+  # Trigger the workflow on push events to the master branch
   push:
     branches:
       - master
+    # Only trigger the workflow on changes to Python files and the workflow file itself
     paths:
-      - '**.py'  # Only trigger on changes to Python files (**.py)
+      - '**.py'  # This comment is correct, it mentions Python files (**.py)
       - '.github/workflows/payment.yaml'  # Include workflow file changes
 
+  # Trigger the workflow on pull request events to the master branch
   pull_request:
     branches:
       - master
+    # Only trigger the workflow on changes to Python files and the workflow file itself
     paths:
-      - '**.py'  # Only trigger on changes to Python files (**.py)
+      - '**.py'  # This comment is correct, it mentions Python files (**.py)
       - '.github/workflows/payment.yaml'  # Include workflow file changes
 
+# Define the jobs that run in the workflow
 jobs:
+  # Define a job named "payment" that builds and deploys the Payment microservice
   payment:
+    # Name of the job
     name: Build and deploy payment microservice
-    runs-on: [self-hosted]  # Use a standard runner instead of self-hosted
+    # Run the job on a self-hosted runner
+    runs-on: [self-hosted]  # Note: The comment suggests using a standard runner instead of self-hosted
 
+    # Define the steps that run in the job
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code 
+        # Use the actions/checkout action to checkout the code
         uses: actions/checkout@v2
+        # Fetch all commit history
         with:
           fetch-depth: 0
 
+      # Step 2: Install Python
       - name:  Python install
+        # Run a command to install Python 3
         run: sudo apt-get install python3 
 
+      # Step 3: Build the Docker image
       - name: Build Docker image
+        # Run a command to build the Docker image
         run: |
-          docker build -t payment .  # Build image tagged as 'payment' from current directory
+          # Build the image tagged as 'payment' from the current directory
+          docker build -t payment .  
 
+      # Step 4: Login to Docker Hub using secrets
       - name: Docker Login (use secrets)
+        # Run a command to login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Step 5: Push the Docker image
       - name: Docker Push
+        # Run commands to push the Docker image
         run: |
+          # Tag the image with the username and latest tag
           docker tag payment ${name}/payment:latest
+          # Push the image to Docker Hub
           docker push ${name}/payment:latest

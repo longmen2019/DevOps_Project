@@ -1,44 +1,71 @@
+# Define the name of the workflow
 name: Dispatch
 
+# Define the events that trigger the workflow
 on:
+  # Trigger the workflow on push events to the master branch
   push:
     branches:
       - master
+    # Only trigger the workflow on changes to Java files and the workflow file itself
     paths:
-      - '**.java'  # Only trigger on changes to Python files (**.py)
-      - '.github/workflows/shipping.yaml'  # Include workflow file changes
+      - '**.java'  # Note: The comment is incorrect, it mentions Python files (**.py) instead of Java files
+      - '.github/workflows/shipping.yaml'  # Include workflow file changes, but the filename is incorrect
 
+  # Trigger the workflow on pull request events to the master branch
   pull_request:
     branches:
       - master
+    # Only trigger the workflow on changes to Java files and the workflow file itself
     paths:
-      - '**.java'  # Only trigger on changes to Python files (**.py)
-      - '.github/workflows/shipping.yaml'  # Include workflow file changes
+      - '**.java'  # Note: The comment is incorrect, it mentions Python files (**.py) instead of Java files
+      - '.github/workflows/shipping.yaml'  # Include workflow file changes, but the filename is incorrect
 
+# Define the jobs that run in the workflow
 jobs:
+  # Define a job named "payment" that builds and deploys the Shipping microservice
   payment:
+    # Name of the job
     name: Build and deploy shipping microservice
-    runs-on: [self-hosted]  # Use a standard runner instead of self-hosted
+    # Run the job on a self-hosted runner
+    runs-on: [self-hosted]  # Note: The comment suggests using a standard runner instead of self-hosted
 
+    # Define the steps that run in the job
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code 
+        # Use the actions/checkout action to checkout the code
         uses: actions/checkout@v2
+        # Fetch all commit history
         with:
           fetch-depth: 0
 
+      # Step 2: Install Java
       - name:  Go install
+        # Note: The step name is incorrect, it should be "Java install" instead of "Go install"
         run: |
-            sudo apt-get install openjdk 17 |
+            # Install OpenJDK 17
+            sudo apt-get install openjdk-17-jdk -y
+            # Verify the Java version
             java -version
 
+      # Step 3: Build the Docker image
       - name: Build Docker image
+        # Run a command to build the Docker image
         run: |
-          docker build -t shipping . 
+          # Build the image tagged as 'shipping' from the current directory
+          docker build -t shipping .  
 
+      # Step 4: Login to Docker Hub using secrets
       - name: Docker Login (use secrets)
+        # Run a command to login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Step 5: Push the Docker image
       - name: Docker Push
+        # Run commands to push the Docker image
         run: |
+          # Tag the image with the username and latest tag
           docker tag shipping ${name}/shipping:latest
+          # Push the image to Docker Hub
           docker push ${name}/shipping:latest

@@ -1,13 +1,34 @@
+# Define the API version for the Kubernetes Service resource
 apiVersion: v1
+# Specify that this is a Service resource
 kind: Service
+# Define the metadata for the Service
 metadata:
+  # Add labels to the Service for easier identification and filtering
   labels:
+    # Set the service label to "catalogue"
+    # This label will be used to identify the Service and its associated pods
     service: catalogue
+  # Set the name of the Service to "catalogue"
+  # This name will be used to identify the Service in the Kubernetes cluster
   name: catalogue
+# Define the specification for the Service
 spec:
+  # Define the ports that the Service will expose
   ports:
-  - name: http
-    port: 8080
-    targetPort: 8080
+    # Define a single port named "http"
+    # This port will be used to access the Service
+    - name: http
+      # Set the port number to 8080
+      # This is the port number that the Service will listen on
+      port: 8080
+      # Set the target port to 8080
+      # This is the port number that the container will listen on
+      # The Service will forward traffic from the port number to the target port
+      targetPort: 8080
+  # Define the selector for the Service
+  # The selector is used to identify the pods that the Service will target
   selector:
+    # Set the service label to "catalogue"
+    # This means that the Service will target pods with the label "service: catalogue"
     service: catalogue
