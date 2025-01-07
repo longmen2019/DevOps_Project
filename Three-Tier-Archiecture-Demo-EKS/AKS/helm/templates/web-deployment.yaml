@@ -1,52 +1,179 @@
+# apiVersion: This specifies the API version for the Kubernetes object being defined.
+# In this case, 'apps/v1' is the API version for the Deployment object, which is a part of the Kubernetes Apps API.
+# The 'apps/v1' API version is used for Deployments, ReplicaSets, and other application-related resources.
 apiVersion: apps/v1
+
+# kind: This defines the type of Kubernetes object being created.
+# A 'Deployment' object is used to manage a set of replicas (i.e., multiple copies) of a pod, ensuring that a specified number of replicas are running at any given time.
+# Deployments are a crucial component of Kubernetes, as they provide a way to manage and scale applications.
 kind: Deployment
+
+# metadata: This section contains metadata about the Deployment object, such as its name and labels.
+# Metadata is used to identify and categorize Kubernetes objects, making it easier to manage and query them.
 metadata:
+  # name: This is the unique name for the Deployment object, which can be used to reference it.
+  # In this case, the name 'web' will be used to identify the Deployment object.
+  # Deployment names must be unique within a namespace, and must conform to DNS label standards.
   name: web
+  # labels: These are key-value pairs that help identify and categorize the Deployment object.
+  # Labels are used to filter and select Kubernetes objects, making it easier to manage and query them.
+  # In this case, the label 'service: web' can be used to select or filter the Deployment object.
   labels:
     service: web
+
+# spec: This section contains the specification for the Deployment object, including its configuration and behavior.
+# The spec section is used to define the desired state of the Deployment object, and is used by Kubernetes to create and manage the object.
 spec:
+  # replicas: This specifies the number of replicas (i.e., copies) of the pod that the Deployment object should maintain.
+  # In this case, the Deployment object will maintain a single replica of the pod.
+  # The number of replicas can be adjusted to scale the application up or down.
   replicas: 1
+
+  # selector: This section defines the criteria for selecting pods that the Deployment object will manage.
+  # The selector is used to identify the pods that the Deployment object will target, and is a crucial component of Kubernetes.
   selector:
+    # matchLabels: This specifies the labels that the selector will match.
+    # In this case, the selector will match pods with the label 'service: web'.
+    # Label selectors are used to filter and select Kubernetes objects, making it easier to manage and query them.
     matchLabels:
       service: web
+
+  # template: This section defines the template for the pods that the Deployment object will create.
+  # The template is used to define the configuration and behavior of the pods, and is a crucial component of Kubernetes.
   template:
+    # metadata: This section contains metadata about the pod, such as its labels.
+    # Metadata is used to identify and categorize Kubernetes objects, making it easier to manage and query them.
     metadata:
+      # labels: These are key-value pairs that help identify and categorize the pod.
+      # In this case, the label 'service: web' will be applied to the pod.
+      # Labels are used to filter and select Kubernetes objects, making it easier to manage and query them.
       labels:
         service: web
+
+    # spec: This section contains the specification for the pod, including its configuration and behavior.
+    # The spec section is used to define the desired state of the pod, and is used by Kubernetes to create and manage the pod.
     spec:
+      # This block is a conditional statement that checks if the 'psp.enabled' value is true.
+      # If it is true, the 'serviceAccountName' field will be set to 'robot-shop'.
+      # This is used to specify the service account that the pod will use to authenticate with other resources in the cluster.
       {{ if .Values.psp.enabled }}
+      # serviceAccountName: This specifies the name of the service account that the pod will use.
+      # Service accounts are used to authenticate and authorize pods to access other resources in the cluster.
       serviceAccountName: robot-shop
       {{ end }}
+
+      # containers: This section defines the containers that will run in the pod.
+      # Containers are used to package and run applications, and are a crucial component of Kubernetes.
       containers:
-      - name: web
-        image: {{ .Values.image.repo }}/rs-web:{{ .Values.image.version }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- if .Values.eum.key }}
-        env:
-        - name: INSTANA_EUM_KEY
-          value: {{ .Values.eum.key }}
-        - name: INSTANA_EUM_REPORTING_URL
-          value: {{ .Values.eum.url }}
-        {{- end}}
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            cpu: 200m
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 50Mi
+        # - name: This specifies the name of the container.
+        # In this case, the name 'web' will be used to identify the container.
+        # Container names must be unique within a pod, and must conform to DNS label standards.
+        - name: web
+          # image: This specifies the Docker image that the container will use.
+          # The image is specified using a template, which will be replaced with the actual image name and version.
+          # Docker images are used to package and run applications, and are a crucial component of Kubernetes.
+          image: {{ .Values.image.repo }}/rs-web:{{ .Values.image.version }}
+          # imagePullPolicy: This specifies the policy for pulling the Docker image.
+          # The policy can be set to 'Always', 'Never', or 'IfNotPresent'.
+          # This determines how often the image is pulled from the registry.
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # This block is a conditional statement that checks if the 'eum.key' value is set.
+          # If it is set, the 'env' section will be populated with environment variables for Instana EUM (End-User Monitoring).
+          {{- if .Values.eum.key }}
+          # env: This section defines the environment variables that will be set for the container.
+          # Environment variables are used to pass configuration values to the application running in the container.
+          env:
+            # - name: This specifies the name of the environment variable.
+            # In this case, the name 'INSTANA_EUM_KEY' will be used to identify the environment variable.
+            # Environment variable names must be unique within a container, and must conform to DNS label standards.
+            - name: INSTANA_EUM_KEY
+              # value: This specifies the value of the environment variable.
+              # In this case, the value will be set to the 'eum.key' value.
+              value: {{ .Values.eum.key }}
+            # - name: This specifies the name of the environment variable.
+            # In this case, the name 'INSTANA_EUM_REPORTING_URL' will be used to identify the environment variable.
+            # Environment variable names must be unique within a container, and must conform to DNS label standards.
+            - name: INSTANA_EUM_REPORTING_URL
+              # value: This specifies the value of the environment variable.
+              # In this case, the value will be set to the 'eum.url' value.
+              value: {{ .Values.eum.url }}
+          {{- end}}
+
+          # ports: This section defines the ports that the container will expose.
+          # Ports are used to allow traffic to flow into the container, and are a crucial component of Kubernetes networking.
+          ports:
+            # - containerPort: This specifies the port number that the container will expose.
+            # In this case, the port number 8080 will be exposed.
+            # Port numbers must be in the range 0-65535, and must not conflict with other ports in the same container.
+            - containerPort: 8080
+
+          # resources: This section defines the resource requests and limits for the container.
+          # Resources are used to manage the compute resources (e.g., CPU, memory) that the container uses.
+          # This is used to ensure that the container has enough resources to run efficiently.
+          resources:
+            # limits: This section defines the resource limits for the container.
+            # Limits are used to specify the maximum amount of resources that the container can use.
+            # This is used to prevent the container from using too many resources and affecting other containers in the cluster.
+            limits:
+              # cpu: This specifies the CPU limit for the container.
+              # The limit is specified in milliCPU units (e.g., 200m = 0.2 CPU cores).
+              # This determines how much CPU the container can use.
+              cpu: 200m
+              # memory: This specifies the memory limit for the container.
+              # The limit is specified in mebibytes (e.g., 100Mi = 100 mebibytes).
+              # This determines how much memory the container can use.
+              memory: 100Mi
+            # requests: This section defines the resource requests for the container.
+            # Requests are used to specify the amount of resources that the container needs to run efficiently.
+            # This is used to ensure that the container has enough resources to run efficiently.
+            requests:
+              # cpu: This specifies the CPU request for the container.
+              # The request is specified in milliCPU units (e.g., 100m = 0.1 CPU cores).
+              # This determines how much CPU the container needs to run efficiently.
+              cpu: 100m
+              # memory: This specifies the memory request for the container.
+              # The request is specified in mebibytes (e.g., 50Mi = 50 mebibytes).
+              # This determines how much memory the container needs to run efficiently.
+              memory: 50Mi
+
+      # restartPolicy: This specifies the restart policy for the container.
+      # The policy can be set to 'Always', 'Never', or 'OnFailure'.
+      # This determines what happens to the container if it fails or exits.
       restartPolicy: Always
+
+      # This block is a conditional statement that checks if the 'web.affinity' value is set.
+      # If it is set, the 'affinity' field will be populated with the value.
+      # Affinity is used to specify the scheduling preferences for the pod.
       {{- with .Values.web.affinity }}
+      # affinity: This specifies the affinity rules for the pod.
+      # Affinity rules are used to determine which nodes the pod can be scheduled on.
       affinity:
+        # This line uses a template function to convert the 'affinity' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      # This block is a conditional statement that checks if the 'web.nodeSelector' value is set.
+      # If it is set, the 'nodeSelector' field will be populated with the value.
+      # Node selector is used to specify the node selection criteria for the pod.
       {{- with .Values.web.nodeSelector }}
+      # nodeSelector: This specifies the node selection rules for the pod.
+      # Node selection rules are used to determine which nodes the pod can be scheduled on.
       nodeSelector:
+        # This line uses a template function to convert the 'nodeSelector' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      # This block is a conditional statement that checks if the 'web.tolerations' value is set.
+      # If it is set, the 'tolerations' field will be populated with the value.
+      # Tolerations are used to specify the toleration rules for the pod.
       {{- with .Values.web.tolerations }}
+      # tolerations: This specifies the toleration rules for the pod.
+      # Toleration rules are used to determine which taints the pod can tolerate.
       tolerations:
+        # This line uses a template function to convert the 'tolerations' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
         {{- toYaml . | nindent 8 }}
       {{- end }}

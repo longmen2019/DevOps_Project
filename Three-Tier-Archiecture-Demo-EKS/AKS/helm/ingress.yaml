@@ -1,17 +1,57 @@
+# apiVersion: This specifies the API version for the Kubernetes object being defined.
+# In this case, the API version is 'networking.k8s.io/v1', which is the API version for the Ingress object in Kubernetes.
+# The 'networking.k8s.io/v1' API version is used for Ingress objects, which are used to manage incoming HTTP requests to a Kubernetes cluster.
 apiVersion: networking.k8s.io/v1
+
+# kind: This defines the type of Kubernetes object being created.
+# In this case, the kind is 'Ingress', which is a Kubernetes object that manages incoming HTTP requests to a cluster.
+# Ingress objects are used to provide a single entry point for incoming HTTP requests, and to route traffic to different services within the cluster.
 kind: Ingress
+
+# metadata: This section contains metadata about the Ingress object, such as its namespace and name.
+# Metadata is used to identify and categorize Kubernetes objects, making it easier to manage and query them.
 metadata:
+  # namespace: This specifies the namespace in which the Ingress object will be created.
+  # In this case, the namespace is 'robot-shop', which suggests that the Ingress object is part of a larger application or system called 'robot-shop'.
   namespace: robot-shop
+  # name: This specifies the name of the Ingress object, which is used to identify it.
+  # In this case, the name of the Ingress object is also 'robot-shop', which suggests that it is the main entry point for the 'robot-shop' application.
   name: robot-shop
+
+# spec: This section contains the specification for the Ingress object, including its configuration and behavior.
+# The spec section is used to define the desired state of the Ingress object, and is used by Kubernetes to create and manage the object.
 spec:
+  # ingressClassName: This specifies the class of the Ingress object, which determines the type of ingress controller that will be used to manage the object.
+  # In this case, the ingress class name is 'azure-application-gateway', which suggests that the Ingress object will be managed by an Azure Application Gateway ingress controller.
   ingressClassName: azure-application-gateway
+
+  # rules: This section defines the rules for the Ingress object, which determine how incoming HTTP requests will be routed to different services within the cluster.
+  # The rules section is used to define the routing behavior for the Ingress object, and is used by the ingress controller to determine where to send incoming requests.
   rules:
+    # - http: This specifies the HTTP protocol for the rule, which determines the type of requests that will be matched by the rule.
+    # In this case, the HTTP protocol is specified, which means that the rule will match incoming HTTP requests.
     - http:
+        # paths: This section defines the paths that will be matched by the rule, which determine the URLs that will be routed to the specified service.
+        # The paths section is used to define the routing behavior for the rule, and is used by the ingress controller to determine where to send incoming requests.
         paths:
+          # - path: This specifies the path that will be matched by the rule, which determines the URL that will be routed to the specified service.
+          # In this case, the path is specified as '/', which means that the rule will match incoming requests to the root URL of the Ingress object.
           - path: /
+            # pathType: This specifies the type of path that will be matched by the rule, which determines how the path will be interpreted by the ingress controller.
+            # In this case, the path type is specified as 'Prefix', which means that the rule will match incoming requests to any URL that starts with the specified path.
             pathType: Prefix
+            # backend: This section defines the backend service that will be used to handle incoming requests that match the rule.
+            # The backend section is used to specify the service that will be used to handle incoming requests, and is used by the ingress controller to determine where to send incoming requests.
             backend:
+              # service: This specifies the service that will be used to handle incoming requests that match the rule.
+              # In this case, the service is specified as 'web', which suggests that the 'web' service will be used to handle incoming requests to the Ingress object.
               service:
+                # name: This specifies the name of the service that will be used to handle incoming requests that match the rule.
+                # In this case, the name of the service is 'web', which suggests that the 'web' service will be used to handle incoming requests to the Ingress object.
                 name: web
+                # port: This specifies the port number that will be used to access the service that will be used to handle incoming requests that match the rule.
+                # In this case, the port number is specified as 8080, which suggests that the 'web' service will be accessed on port 8080.
                 port:
+                  # number: This specifies the port number that will be used to access the service that will be used to handle incoming requests that match the rule.
+                  # In this case, the port number is specified as 8080, which suggests that the 'web' service will be accessed on port 8080.
                   number: 8080

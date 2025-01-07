@@ -1,6 +1,19 @@
+# apiVersion: This specifies the API version for the Chart.yaml file, which is a part of the Helm package manager.
+# In this case, the API version is 'v1', which is the most common and stable version for Helm charts.
 apiVersion: v1
-name: robot-shop
-version: 1.1.0
-home: https://github.com/instana/robot-shop
-description: Sample micoservices application
 
+# name: This specifies the name of the Helm chart, which is used to identify the chart and its packages.
+# In this case, the name of the chart is 'robot-shop', which suggests that it is a chart for a robot shop application.
+name: robot-shop
+
+# version: This specifies the version of the Helm chart, which is used to track changes and updates to the chart.
+# In this case, the version of the chart is '1.1.0', which suggests that it is a minor update to the chart.
+version: 1.1.0
+
+# home: This specifies the home page or website for the Helm chart, which can be used to provide more information about the chart and its usage.
+# In this case, the home page for the chart is 'https://github.com/instana/robot-shop', which suggests that the chart is hosted on GitHub and is part of the Instana organization.
+home: https://github.com/instana/robot-shop
+
+# description: This specifies a brief description of the Helm chart, which can be used to provide more information about the chart and its purpose.
+# In this case, the description of the chart is 'Sample microservices application', which suggests that the chart is an example of how to deploy a microservices-based application using Helm.
+description: Sample microservices application

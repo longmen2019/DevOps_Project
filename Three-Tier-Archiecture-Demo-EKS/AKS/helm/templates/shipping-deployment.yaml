@@ -155,4 +155,36 @@ spec:
 
       # This block is a conditional statement that checks if the 'shipping.affinity' value is set.
       # If it is set, the 'affinity' field will be set to the value.
-      # Af​
+      # Affinity is used to specify the scheduling preferences for the pod.
+      {{- with .Values.shipping.affinity }}
+      # affinity: This specifies the affinity rules for the pod.
+      # Affinity rules are used to determine which nodes the pod can be scheduled on.
+      affinity:
+        # This line uses a template function to convert the 'affinity' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # This block is a conditional statement that checks if the 'shipping.nodeSelector' value is set.
+      # If it is set, the 'nodeSelector' field will be set to the value.
+      # Node selector is used to specify the node selection criteria for the pod.
+      {{- with .Values.shipping.nodeSelector }}
+      # nodeSelector: This specifies the node selection rules for the pod.
+      # Node selection rules are used to determine which nodes the pod can be scheduled on.
+      nodeSelector:
+        # This line uses a template function to convert the 'nodeSelector' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # This block is a conditional statement that checks if the 'shipping.tolerations' value is set.
+      # If it is set, the 'tolerations' field will be set to the value.
+      # Tolerations are used to specify the toleration rules for the pod.
+      {{- with .Values.shipping.tolerations }}
+      # tolerations: This specifies the toleration rules for the pod.
+      # Toleration rules are used to determine which taints the pod can tolerate.
+      tolerations:
+        # This line uses a template function to convert the 'tolerations' value to YAML format.
+        # The 'toYaml' function is used to convert the value to YAML, and the 'nindent' function is used to indent the YAML with 8 spaces.
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
