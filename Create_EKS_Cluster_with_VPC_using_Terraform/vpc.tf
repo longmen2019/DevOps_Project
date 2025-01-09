@@ -10,7 +10,7 @@ data "aws_availability_zones" "available" {}
 # Declaring local values for the configuration.
 locals {
   # Creating a local variable for the cluster name, using a random string suffix.
-  cluster_name = "abhi-eks-${random_string.suffix.result}"
+  cluster_name = "long-men-eks-${random_string.suffix.result}"
 }
 
 # Resource to generate a random string for the suffix.
