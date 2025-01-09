@@ -1,34 +1,129 @@
-# terraform-eks
-A sample repository to create EKS on AWS using Terraform.
+# Terraform EKS Project
 
-### Install AWS CLI 
+This project sets up an Amazon EKS (Elastic Kubernetes Service) cluster using Terraform. Follow the steps below to install the necessary tools, configure your environment, and deploy the EKS cluster.
 
-As the first step, you need to install AWS CLI as we will use the AWS CLI (`aws configure`) command to connect Terraform with AWS in the next steps.
+## Prerequisites
 
-Follow the below link to Install AWS CLI.
+- AWS CLI v2
+- Terraform
+- unzip
+- gnupg and software-properties-common (for HashiCorp installation)
+- Git
+
+## Install AWS CLI v2
+
+If you have AWS CLI v1 installed, you may want to remove it first:
+
+```sh
+sudo yum remove awscli
 ```
-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+Download and install AWS CLI v2:
+
+```sh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```
 
-### Install Terraform
+To update AWS CLI v2:
 
-Next, Install Terraform using the below link.
+```sh
+sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 ```
-https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+
+Verify the installation:
+
+```sh
+which aws
+aws --version
 ```
 
-### Connect Terraform with AWS
+## Install Terraform
 
-Its very easy to connect Terraform with AWS. Run `aws configure` command and provide the AWS Security credentials as shown in the video.
+Add the HashiCorp GPG key:
 
-### Initialize Terraform
+```sh
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+```
 
-Clone the repository and Run `terraform init`. This will intialize the terraform environment for you and download the modules, providers and other configuration required.
+Add the HashiCorp repository:
 
-### Optionally review the terraform configuration
+```sh
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update
+```
 
-Run `terraform plan` to see the configuration it creates when executed.
+Install Terraform:
 
-### Finally, Apply terraform configuation to create EKS cluster with VPC 
+```sh
+sudo apt-get install terraform
+```
 
-`terraform apply`
+Verify the installation:
+
+```sh
+terraform -help
+terraform -help plan
+```
+
+Enable autocompletion:
+
+```sh
+touch ~/.bashrc
+terraform -install-autocomplete
+```
+
+## Configure AWS CLI
+
+Configure AWS CLI with your credentials:
+
+```sh
+aws configure
+aws configure list
+```
+
+## Clone the Project Repository
+
+Clone the project repository from GitHub:
+
+```sh
+git clone https://github.com/longmen2019/DevOps_Project.git
+cd DevOps_Project
+cd Create_EKS_Cluster_with_VPC_using_Terraform
+```
+
+## Deploy the EKS Cluster
+
+Initialize Terraform:
+
+```sh
+terraform init
+```
+
+Plan the deployment:
+
+```sh
+terraform plan
+```
+
+Apply the configuration to create the EKS cluster:
+
+```sh
+terraform apply
+```
+
+## Destroy the EKS Cluster
+
+To delete the EKS cluster and all associated resources:
+
+```sh
+terraform destroy
+```
+
+## Additional Information
+
+For more details about the project and customization options, refer to the [official documentation](https://github.com/longmen2019/DevOps_Project).
