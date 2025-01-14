@@ -1,8 +1,3 @@
-# Declare AWS availability zones
-data "aws_availability_zones" "azs" {
-  state = "available"
-}
-
 # VPC
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -41,14 +36,14 @@ module "sg" {
       to_port     = 8080
       protocol    = "tcp"
       description = "HTTP"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = "0.0.0.0/0"
     },
     {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
       description = "SSH"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 
@@ -57,7 +52,7 @@ module "sg" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 
@@ -72,7 +67,6 @@ module "ec2_instance" {
 
   name = "Jenkins-Server"
 
-  ami                         = data.aws_ami.ubuntu.id  # Use the Ubuntu AMI
   instance_type               = var.instance_type
   key_name                    = "eks_terraform"
   monitoring                  = true
