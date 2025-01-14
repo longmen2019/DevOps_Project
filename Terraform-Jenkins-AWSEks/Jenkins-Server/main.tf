@@ -67,6 +67,7 @@ module "ec2_instance" {
 
   name = "Jenkins-Server"
 
+  ami                         = data.aws_ami.ubuntu.id  # Use the Ubuntu AMI
   instance_type               = var.instance_type
   key_name                    = "eks_terraform"
   monitoring                  = true
@@ -82,3 +83,4 @@ module "ec2_instance" {
     Environment = "dev"
   }
 }
+
