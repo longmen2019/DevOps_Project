@@ -1,10 +1,10 @@
-data "aws_ami" "ubuntu" {
+data "aws_ami" "example" {
   most_recent = true
-  owners      = ["099720109477"]  # Canonical's AWS account ID
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["amzn2-ami-kernel-*-hvm-*-x86_64-gp2"]
   }
 
   filter {
@@ -17,3 +17,5 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
+
+data "aws_availability_zones" "azs" {}
