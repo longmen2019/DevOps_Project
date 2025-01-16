@@ -1,20 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
-data "aws_cloudwatch_log_group" "existing" {
-  name = "/aws/eks/my-eks-cluster/cluster"
-}
-
-resource "aws_cloudwatch_log_group" "this" {
-  count = data.aws_cloudwatch_log_group.existing.id == "" ? 1 : 0
-  name  = "/aws/eks/my-eks-cluster/cluster"
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -43,6 +26,7 @@ module "vpc" {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
     "kubernetes.io/role/internal-elb"      = 1
   }
+
 }
 
 module "eks" {
