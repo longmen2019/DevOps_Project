@@ -1,14 +1,4 @@
-provider "aws" {
-  region = var.region
-}
 
-resource "aws_cloudwatch_log_group" "this" {
-  name = "/aws/eks/my-eks-cluster/cluster"
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
