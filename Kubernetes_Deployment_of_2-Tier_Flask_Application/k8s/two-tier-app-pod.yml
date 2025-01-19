@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: two-tier-app-pod            # Name of the container
-    image: trainwithshubham/flaskapp:latest # Docker image to use for the container
+    image: lmen776/EKS-2-TIER-FLASK-APP:tag # Updated Docker image to use for the container
     env:
       - name: MYSQL_HOST
         value: "10.98.19.211"         # Environment variable for MySQL host; this is your MySQL's service cluster IP, make sure to change it with yours
