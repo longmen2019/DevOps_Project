@@ -1,0 +1,10 @@
+apiVersion: v1                        # Specifies the API version
+kind: PersistentVolumeClaim           # Specifies the kind of resource, which is PersistentVolumeClaim
+metadata:
+  name: mysql-pvc                     # Name of the PersistentVolumeClaim resource
+spec:
+  accessModes:
+    - ReadWriteOnce                   # Specifies the access mode, allowing the volume to be mounted as read-write by a single node
+  resources:
+    requests:
+      storage: 256Mi                  # Requests the storage capacity of 256Mi for the volume
