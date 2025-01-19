@@ -1,0 +1,20 @@
+apiVersion: v1                        # Specifies the API version
+kind: Pod                             # Specifies the kind of resource, which is Pod
+metadata:
+  name: two-tier-app-pod              # Name of the Pod resource
+spec:
+  containers:
+  - name: two-tier-app-pod            # Name of the container
+    image: trainwithshubham/flaskapp:latest # Docker image to use for the container
+    env:
+      - name: MYSQL_HOST
+        value: "10.98.19.211"         # Environment variable for MySQL host; this is your MySQL's service cluster IP, make sure to change it with yours
+      - name: MYSQL_PASSWORD
+        value: "admin"                # Environment variable for MySQL password
+      - name: MYSQL_USER
+        value: "admin"                # Environment variable for MySQL user
+      - name: MYSQL_DB
+        value: "mydb"                 # Environment variable for MySQL database name
+    ports:
+      - containerPort: 5000           # Port on which the container will accept connections
+    imagePullPolicy: Always           # Specifies the image pull policy, which is Always to always pull the latest image

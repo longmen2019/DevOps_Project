@@ -1,0 +1,37 @@
+apiVersion: apps/v1                    # Specifies the API version
+kind: Deployment                       # Specifies the kind of resource, which is Deployment
+metadata:
+  name: mysql                          # Name of the Deployment resource
+  labels:
+    app: mysql                         # Labels to categorize the resource
+spec:
+  replicas: 1                          # Number of pod replicas to maintain
+  selector:
+    matchLabels:
+      app: mysql                       # Labels used to select the pods managed by this Deployment
+  template:
+    metadata:
+      labels:
+        app: mysql                     # Labels applied to the pods created by this template
+    spec:
+      containers:
+        - name: mysql                  # Name of the container
+          image: mysql:latest          # Docker image to use for the container
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "admin"           # Environment variable for MySQL root password
+            - name: MYSQL_DATABASE
+              value: "mydb"            # Environment variable for MySQL database name
+            - name: MYSQL_USER
+              value: "admin"           # Environment variable for MySQL user
+            - name: MYSQL_PASSWORD
+              value: "admin"           # Environment variable for MySQL user password
+          ports:
+            - containerPort: 3306      # Port on which the container will accept connections
+          volumeMounts:
+            - name: mysqldata
+              mountPath: /var/lib/mysql # Path in the container where the volume will be mounted
+      volumes:
+        - name: mysqldata
+          persistentVolumeClaim:
+            claimName: mysql-pvc        # Name of the PersistentVolumeClaim to use
