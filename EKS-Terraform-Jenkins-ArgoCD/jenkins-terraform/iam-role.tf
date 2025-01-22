@@ -5,7 +5,7 @@ resource "aws_iam_role" "iam-role" {
   # Specify the name of the IAM role, retrieved from a variable
 
   assume_role_policy = <<EOF
-  # Define the assume role policy for the IAM role, using a heredoc
+  # Define the assume role policy for the IAM role, using a heredoc for the policy document
 
 {
   "Version": "2012-10-17",
@@ -29,4 +29,5 @@ resource "aws_iam_role" "iam-role" {
   ]
 }
 EOF
+  # End the assume role policy definition
 }
