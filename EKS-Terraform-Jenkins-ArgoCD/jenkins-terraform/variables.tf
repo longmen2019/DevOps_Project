@@ -19,5 +19,5 @@ variable "instance-name" {}
 variable "key-name" {}
 # Define a variable for the SSH key pair name
 
-# variable "iam-role" {}
+variable "iam-role" {}
 # Define a variable for the IAM role name (currently commented out)
