@@ -1,0 +1,86 @@
+properties([
+    parameters([
+        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name'),
+        choice(choices: ['apply', 'destroy'], description: 'Select Terraform action', name: 'Terraform-Action')
+    ])
+])
+
+pipeline {
+    agent any
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/longmen2019/DevOps_Project.git'
+            }
+        }
+        stage('Initialize Terraform') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('EKS-Terraform-Jenkins-ArgoCD/eks-terraform') {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
+        stage('Validate Terraform Code') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('EKS-Terraform-Jenkins-ArgoCD/eks-terraform') {
+                        sh 'terraform validate'
+                    }
+                }
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('EKS-Terraform-Jenkins-ArgoCD/eks-terraform') {
+                        sh "terraform plan -var-file=${params.'File-Name'}"
+                    }
+                }
+            }
+        }
+        stage('Terraform Action') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('EKS-Terraform-Jenkins-ArgoCD/eks-terraform') {
+                        script {
+                            echo "${params.'Terraform-Action'}"
+                            if (params.'Terraform-Action' == 'apply') {
+                                sh "terraform apply -auto-approve -var-file=${params.'File-Name'}"
+                            } else if (params.'Terraform-Action' == 'destroy') {
+                                sh "terraform destroy -auto-approve -var-file=${params.'File-Name'}"
+                            } else {
+                                error "Invalid value for Terraform-Action: ${params.'Terraform-Action'}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+********************************TEST AWS CREDENTIAL********************************************************
+pipeline {
+    agent any
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/longmen2019/DevOps_Project.git'
+            }
+        }
+        stage('Initialize Terraform') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('eks-terraform') {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
+    }
+}
+***************************INIT-PLAN-VALIDATE*****************************************************
+
+        
