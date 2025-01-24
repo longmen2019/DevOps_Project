@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: tetris
-        image: lmen776/tetrisv2:2
+        image: lmen776/tetrisv1:2
         ports:
         - containerPort: 3000
 ---
