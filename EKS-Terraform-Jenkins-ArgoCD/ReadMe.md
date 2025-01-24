@@ -1,6 +1,4 @@
-Here is a README.md file based on the provided command lines:
 
----
 
 # EKS-Terraform-Jenkins-ArgoCD
 
@@ -54,61 +52,75 @@ cd DevOps_Project/EKS-Terraform-Jenkins-ArgoCD/jenkins-terraform
     terraform apply --auto-approve
     ```
 
-### Remove Existing Project Directory
+### Jenkins and ArgoCD Setup
 
-```bash
-cd ..
-rm -rf DevOps_Project
-```
-
-### Re-clone the Repository
-
-```bash
-git clone https://github.com/longmen2019/DevOps_Project.git
-cd DevOps_Project/EKS-Terraform-Jenkins-ArgoCD/jenkins-terraform
-```
-
-### Re-initialize and Apply Terraform Configuration
-
-1. **Initialize Terraform**
+1. **Set hostname for Jenkins**
 
     ```bash
-    terraform init
+    sudo hostnamectl set-hostname JenkinServer
     ```
 
-2. **Apply Terraform Configuration**
+2. **Switch to Jenkins user**
 
     ```bash
-    terraform apply --auto-approve
+    sudo su jenkins
     ```
 
-### Additional Terraform Commands
-
-- **Deploy using `terraform deploy`**
+3. **Check Jenkins and Docker versions**
 
     ```bash
-    terraform deploy --auto-approve
+    jenkins --version
+    docker --version
     ```
 
-- **Validate and plan with specific variable file**
+4. **Check Jenkins service status**
 
     ```bash
-    terraform plan -var-file=variables.tfvars
-    terraform apply -var-file=variables.tfvars --auto-approve
+    systemctl status jenkins
     ```
 
-### Managing IAM Role
-
-1. **View IAM Role Configuration**
+5. **Configure AWS CLI**
 
     ```bash
-    cat iam-role.tf
+    aws configure
     ```
 
-2. **Edit IAM Role Configuration**
+6. **Update kubeconfig for EKS**
 
     ```bash
-    nano iam-role.tf
+    aws eks update-kubeconfig --region us-east-1 --name Tetris-EKS-Cluster
+    ```
+
+7. **Check Kubernetes nodes and services**
+
+    ```bash
+    kubectl get nodes
+    kubectl get svc
+    ```
+
+8. **Create namespaces for Tetris and ArgoCD**
+
+    ```bash
+    kubectl create namespace tetris
+    kubectl create namespace argocd
+    ```
+
+9. **Install ArgoCD**
+
+    ```bash
+    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
+    ```
+
+10. **Retrieve ArgoCD initial admin password**
+
+    ```bash
+    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+    ```
+
+11. **Patch ArgoCD server service to use LoadBalancer**
+
+    ```bash
+    kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
     ```
 
 ### Additional Information
@@ -119,6 +131,3 @@ Ensure you have valid AWS credentials configured. You can configure them using t
 aws configure
 ```
 
----
-
-Feel free to adjust the content as needed! Let me know if there's anything else you need assistance with.
