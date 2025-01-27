@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     # The S3 bucket where the Terraform state file will be stored.
-    bucket         = "three-tier-devsecops-project-bucket-longmen2"
+    bucket         = "three-tier-devsecops-project-bucket-longmen"
     
     # The AWS region where the S3 bucket and DynamoDB table are located.
     region         = "us-east-1"  # Changed to us-east-1
