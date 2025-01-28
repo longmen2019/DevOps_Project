@@ -28,10 +28,10 @@ pipeline {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' 
                             $SCANNER_HOME/bin/sonar-scanner \
-                                -Dsonar.projectKey=backend \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=http://34.238.5.226:9000 \
-                                -Dsonar.login=sqp_9c7eb9aec9a48f38ff6ff44134bae30828bc918d
+                                  -Dsonar.projectKey=backend \
+                                  -Dsonar.sources=. \
+                                  -Dsonar.host.url=http://34.238.5.226:9000 \
+                                  -Dsonar.login=sqp_c4d349e6c02892d707c33b729b8ec3016afd5d07
                         '''
                     }
                 }
