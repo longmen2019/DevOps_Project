@@ -1,5 +1,3 @@
-
-
 # EKS-Terraform-Jenkins-ArgoCD
 
 This project sets up Jenkins and ArgoCD on Amazon Elastic Kubernetes Service (EKS) using Terraform.
@@ -130,4 +128,3 @@ Ensure you have valid AWS credentials configured. You can configure them using t
 ```bash
 aws configure
 ```
-
