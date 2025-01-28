@@ -8,7 +8,7 @@ pipeline {
         SCANNER_HOME=tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
         AWS_ECR_REPO_NAME = credentials('ECR_REPO_BACKEND')
-        AWS_DEFAULT_REGION = 'us-west-2'
+        AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
     stages {
@@ -19,19 +19,19 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', credentialsId: 'GITHUB', url: 'https://github.com/codewithmuh/three-tier-devsecops-project.git'
+                git branch: 'main', credentialsId: 'GITHUB', url: 'https://github.com/longmen2022/DevOps_Project.git'
             }
         }
         stage('Sonarqube Analysis') {
             steps {
-                dir('app-code/backend') {
+                dir('Three_Tier_DevSecOps_Kubernetes_Project_on_AWS_EKS_with_ArgoCD_Prometheus_Grafana_Jenkins/app-code/backend') {
                     withSonarQubeEnv('sonar-server') {
                         sh ''' 
                             $SCANNER_HOME/bin/sonar-scanner \
-                                  -Dsonar.projectKey=backend \
-                                  -Dsonar.sources=. \
-                                  -Dsonar.host.url=http://34.238.5.226:9000 \
-                                  -Dsonar.login=sqp_c4d349e6c02892d707c33b729b8ec3016afd5d07
+                                    -Dsonar.projectKey=backend \
+                                    -Dsonar.sources=. \
+                                    -Dsonar.host.url=http://34.238.5.226:9000 \
+                                    -Dsonar.login=sqp_8f8412ec862651b07e99565e5d56c5702280cb96
                         '''
                     }
                 }
@@ -46,7 +46,7 @@ pipeline {
         }
         stage('OWASP Dependency-Check Scan') {
             steps {
-                dir('app-code/backend') {
+                dir('Three_Tier_DevSecOps_Kubernetes_Project_on_AWS_EKS_with_ArgoCD_Prometheus_Grafana_Jenkins/app-code/backend') {
                     dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                 }
@@ -54,7 +54,7 @@ pipeline {
         }
         stage('Trivy File Scan') {
             steps {
-                dir('app-code/backend') {
+                dir('Three_Tier_DevSecOps_Kubernetes_Project_on_AWS_EKS_with_ArgoCD_Prometheus_Grafana_Jenkins/app-code/backend') {
                     sh 'trivy fs . > trivyfs.txt'
                 }
             }
@@ -62,7 +62,7 @@ pipeline {
         stage("Docker Image Build") {
             steps {
                 script {
-                    dir('app-code/backend') {
+                    dir('Three_Tier_DevSecOps_Kubernetes_Project_on_AWS_EKS_with_ArgoCD_Prometheus_Grafana_Jenkins/app-code/backend') {
                             sh 'docker system prune -f'
                             sh 'docker container prune -f'
                             sh 'docker build -t ${AWS_ECR_REPO_NAME} .'
@@ -86,7 +86,7 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git branch: 'main', credentialsId: 'GITHUB', url: 'https://github.com/codewithmuh/three-tier-devsecops-project.git'
+                git branch: 'main', credentialsId: 'GITHUB', url: 'https://github.com/longmen2022/DevOps_Project.git'
             }
         }
         stage('Update Deployment file') {
@@ -95,7 +95,7 @@ pipeline {
                 GIT_USER_NAME = "codewithmuh"
             }
             steps {
-                dir('kubernetes-manifests/backend') {
+                dir('Three_Tier_DevSecOps_Kubernetes_Project_on_AWS_EKS_with_ArgoCD_Prometheus_Grafana_Jenkins/kubernetes-manifests/backend') {
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                             git config user.email "rashiddaha80@gmail.com"
