@@ -1,0 +1,12 @@
+# Specifies the API version
+apiVersion: kustomize.config.k8s.io/v1beta1
+# Defines the kind of resource, which is Kustomization
+kind: Kustomization
+# Lists the resources to be included
+resources:
+  # Secret for accessing the Git repository
+  - git-repo-secret.yaml
+  # Project configuration
+  - project.yaml
+  # ApplicationSet configuration
+  - applicationset.yaml

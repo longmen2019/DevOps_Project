@@ -1,10 +1,9 @@
-
 name: Test and Build
 
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '**/*'
 
@@ -58,22 +57,22 @@ jobs:
         run: |
           docker push lmen776/demo-app:${{ env.VERSION }}
       
-      # UPdate the K8s Manifest Files
-      - name: Update K8s Manifests
-        run: |
-          cat deploy/deploy.yaml
-          sed -i "s|image: lmen776/demo-app:.*|image: lmen776/demo-app:${{ env.VERSION }}|g" deploy/deploy.yaml
-          cat deploy/deploy.yaml
+      # # UPdate the K8s Manifest Files
+      # - name: Update K8s Manifests
+      #   run: |
+      #     cat deploy/deploy.yaml
+      #     sed -i "s|image: lmen776/demo-app:.*|image: lmen776/demo-app:${{ env.VERSION }}|g" deploy/deploy.yaml
+      #     cat deploy/deploy.yaml
 
-      # Update Github
-      - name: Commit the changes
-        run: |
-          git config --global user.email "<"lmen776@gmail.com">"
-          git config --global user.name "GitHub Actions Bot"
-          git add deploy/deploy.yaml
-          git commit -m "Update deploy.yaml with new image version - ${{ env.VERSION }}"
-          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/longmen2022/flask-app.git
-          git push origin main
+      # # Update Github
+      # - name: Commit the changes
+      #   run: |
+      #     git config --global user.email "<>"
+      #     git config --global user.name "GitHub Actions Bot"
+      #     git add deploy/deploy.yaml
+      #     git commit -m "Update deploy.yaml with new image version - ${{ env.VERSION }}"
+      #     git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/infosecsingh/Flask-App-GitHub-Actions-ArgoCD.git
+      #     git push origin master
 
       
 
