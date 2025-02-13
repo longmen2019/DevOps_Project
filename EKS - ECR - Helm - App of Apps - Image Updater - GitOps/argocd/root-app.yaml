@@ -1,0 +1,31 @@
+# Specifies the API version
+apiVersion: argoproj.io/v1alpha1
+# Defines the kind of resource, which is Application
+kind: Application
+# Metadata for the Application
+metadata:
+  # Name of the Application
+  name: root-app-of-apps
+  # Namespace where the Application is deployed
+  namespace: argocd
+  # Finalizer to ensure resources are properly cleaned up
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+# Specification for the Application
+spec:
+  # Project name
+  project: default
+  # Destination cluster details
+  destination:
+    # Namespace where the Application will be deployed
+    namespace: argocd
+    # Name of the destination cluster
+    name: in-cluster
+  # Source repository details
+  source:
+    # Path in the repository
+    path: lessons/200/argocd/project
+    # URL of the Git repository
+    repoURL: git@github.com:antonputra/tutorials.git
+    # Target revision to deploy (main branch)
+    targetRevision: main

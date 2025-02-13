@@ -1,0 +1,35 @@
+# Specifies the API version
+apiVersion: argoproj.io/v1alpha1
+# Defines the kind of resource, which is AppProject
+kind: AppProject
+# Metadata for the AppProject
+metadata:
+  # Annotations for the AppProject
+  annotations:
+    # Default destination server for ArgoCD autopilot
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    # Sync options for ArgoCD
+    argocd.argoproj.io/sync-options: PruneLast=true
+  # Name of the AppProject
+  name: tutorial-app-of-apps
+  # Namespace where the AppProject is deployed
+  namespace: argocd
+# Specification for the AppProject
+spec:
+  # Whitelist of cluster resources
+  clusterResourceWhitelist:
+    - group: "*" # Allows all groups
+      kind: "*" # Allows all kinds
+  # Description of the AppProject
+  description: tutorial argocd app-of-apps
+  # Destinations where the AppProject can deploy resources
+  destinations:
+    - namespace: "*" # Allows all namespaces
+      server: "*" # Allows all servers
+  # Whitelist of namespace resources
+  namespaceResourceWhitelist:
+    - group: "*" # Allows all groups
+      kind: "*" # Allows all kinds
+  # List of source repositories
+  sourceRepos:
+    - "*" # Allows all source repositories

@@ -1,0 +1,69 @@
+# Specifies the API version
+apiVersion: argoproj.io/v1alpha1 
+# Defines the kind of resource, which is ApplicationSet
+kind: ApplicationSet 
+# Metadata for the ApplicationSet
+metadata:
+  # Name of the ApplicationSet
+  name: tutorial-appset 
+  # Namespace where the ApplicationSet is deployed
+  namespace: argocd 
+# Specification for the ApplicationSet
+spec:
+  # Defines the generators for the ApplicationSet
+  generators: 
+    - list: 
+        # List of elements (environments)
+        elements:
+          # Specifies the 'dev' environment
+          - env: dev 
+          # Specifies the 'prod' environment
+          - env: prod 
+  # Template for the applications
+  template:
+    # Metadata for the applications
+    metadata:
+      # Template for naming applications with the environment variable
+      name: "apps-{{.env}}" 
+      # Namespace for the applications
+      namespace: argocd 
+      # Finalizer to ensure resources are properly cleaned up
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io 
+    # Specification for the applications
+    spec:
+      # Project name
+      project: tutorial-app-of-apps 
+      # Source repository details
+      source:
+        # URL of the Git repository
+        repoURL: git@github.com:antonputra/k8s.git 
+        # Target revision to deploy (latest commit)
+        targetRevision: HEAD 
+        # Path in the repository based on the environment variable
+        path: envs/{{.env}} 
+        # Recursively apply resources in the directory
+        directory:
+          recurse: true 
+      # Destination cluster details
+      destination:
+        # Destination cluster server URL
+        server: https://kubernetes.default.svc 
+      # Synchronization policy
+      syncPolicy:
+        automated:
+          # Automatically remove resources that are no longer tracked
+          prune: true 
+          # Automatically correct resources to match desired state
+          selfHeal: true 
+          # Do not allow empty resources
+          allowEmpty: false 
+        syncOptions:
+          # Validate resources before applying
+          - Validate=true 
+          # Do not create namespace if it does not exist
+          - CreateNamespace=false 
+          # Policy for resource pruning
+          - PrunePropagationPolicy=foreground 
+          # Perform pruning after applying changes
+          - PruneLast=true 
