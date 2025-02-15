@@ -109,12 +109,6 @@ The `app.yaml` file includes annotations that configure Argo CD Image Updater to
 
 2. **Argo CD Image Updater will automatically detect the new image tag (v1.1) and update the Nginx deployment.**  You'll see the change reflected in the Argo CD UI.
 
-## Key improvements in this version:
 
-* **Two Argo CD Installation Methods:** Includes both `kubectl apply` and Terraform options.
-* **NodePort Explanation:** Adds clarity on using NodePort for local access.
-* **Password Retrieval:** Uses `argocd admin initial-password` for password retrieval.
-* **Clearer Image Update Process:**  Simplifies the steps for updating the Nginx image.
-* **Values.yaml Importance:** Highlights the need to configure the image name in `values.yaml`.
 
 
