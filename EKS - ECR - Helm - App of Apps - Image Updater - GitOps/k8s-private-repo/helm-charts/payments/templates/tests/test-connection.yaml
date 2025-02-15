@@ -1,15 +1,30 @@
+# Kubernetes API version
 apiVersion: v1
+# Type of Kubernetes resource: Pod
 kind: Pod
+# Metadata about the Pod
 metadata:
+  # Name of the Pod, using Helm templating to include the full name of the release/chart
   name: "{{ include "payments.fullname" . }}-test-connection"
+  # Labels for the Pod
   labels:
+    # Include labels from the "payments.labels" template, indented 4 spaces
     {{- include "payments.labels" . | nindent 4 }}
+  # Annotations for the Pod
   annotations:
+    # Annotation indicating this Pod is a Helm test hook
     "helm.sh/hook": test
+# Specification of the Pod
 spec:
+  # List of containers in the Pod
   containers:
+    # Name of the container
     - name: wget
+      # Docker image used for the container (minimal image with wget)
       image: busybox
+      # Command executed when the container starts (wget command)
       command: ['wget']
+      # Arguments for the wget command (URL to test), using Helm templating for service name and port
       args: ['{{ include "payments.fullname" . }}:{{ .Values.service.port }}']
+  # Restart policy for the Pod (Never restart if the container exits)
   restartPolicy: Never
