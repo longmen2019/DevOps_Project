@@ -1,0 +1,57 @@
+    - name: Create VPC
+      ec2_vpc_net:
+        name: ansible-vpc
+        cidr_block: 10.0.0.0/16
+        region: us-east-1
+      register: vpc_result
+
+    - name: Create Internet Gateway
+      ec2_vpc_igw:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        state: present
+      register: igw
+
+    - name: Create Public Subnet for FE
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        cidr: 10.0.0.0/24
+        az: us-east-1a
+        map_public: true
+        state: present
+      register: public_subnet
+
+    - name: Create Private Subnet for BE
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        cidr: 10.0.1.0/24
+        az: us-east-1a
+        state: present
+      register: private_subnet
+
+    - name: Create NAT Gateway
+      ec2_vpc_nat_gateway:
+        subnet_id: "{{ public_subnet.subnet.id }}"
+        state: present
+        wait: true
+      register: nat
+
+    - name: Configure Public Route Table
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id }}"
+        subnets:
+          - "{{ public_subnet.subnet.id }}"
+      register: public_route_table
+
+    - name: Configure Private Route Table
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ nat.nat_gateway_id }}"
+        subnets:
+          - "{{ private_subnet.subnet.id }}"
+      register: private_route_table
+
