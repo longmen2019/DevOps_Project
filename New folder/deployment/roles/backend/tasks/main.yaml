@@ -1,0 +1,35 @@
+- name: Clone git repo for backend
+  git:
+    repo: https://github.com/longmen2022/two-tier-app.git
+    dest: /home/ubuntu/two-tier
+    clone: yes
+    update: yes
+
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install python and pip
+  become: yes
+  apt:
+    pkg:
+      - python3-pip
+
+- name: Install requirements
+  pip:
+    executable: pip3
+    requirements: /home/ubuntu/two-tier/backend/requirements.txt
+
+- name: Setup Flask Path
+  shell: echo $PATH
+  environment:
+    PATH: "/home/ubuntu/.local/bin:{{ ansible_env.PATH }}"
+
+- name: Run the backend
+  command:
+    chdir: /home/ubuntu/two-tier/backend
+    cmd: /home/ubuntu/.local/bin/flask run --host 0.0.0.0
+  async: 1000
+  poll: 0
+

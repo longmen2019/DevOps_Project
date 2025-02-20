@@ -1,0 +1,36 @@
+- name: Clone git repo for frontend
+  git:
+    repo: https://github.com/longmen2022/two-tier-app.git
+    dest: /home/ubuntu/two-tier
+    clone: yes
+    update: yes
+  ignore_errors: true
+
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install node and npm
+  become: yes
+  apt:
+    pkg:
+      - nodejs
+      - npm
+
+- name: Install dependencies
+  npm:
+    path: /home/ubuntu/two-tier/frontend
+
+- name: Copy updated setupProxy file
+  copy:
+    src: files/setupProxy.js
+    dest: /home/ubuntu/two-tier/frontend/src/setupProxy.js
+
+- name: Run the application
+  command:
+    cmd: npm start
+    chdir: /home/ubuntu/two-tier/frontend
+  async: 1000
+  poll: 0
+

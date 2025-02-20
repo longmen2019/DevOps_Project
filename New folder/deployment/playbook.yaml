@@ -1,0 +1,21 @@
+#- hosts: frontend
+# tasks: 
+#   - name: Update apt
+#     become: yes
+#     apt: 
+#       update_cache: yes
+
+#   - name: Install node and npm
+#     become: yes
+#     apt:
+#       pkg:
+#         - nodejs
+#         - npm
+- hosts: frontend
+  roles:
+    - frontend
+
+- hosts: backend
+  roles:
+    - backend
+
