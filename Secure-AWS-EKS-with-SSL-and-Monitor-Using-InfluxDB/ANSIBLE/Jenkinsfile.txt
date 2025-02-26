@@ -1,28 +1,44 @@
 pipeline {
+    // Define the agent section to specify where the pipeline should run
     agent any
+
+    // Define the tools section to specify the tools required for the pipeline
     tools{
         ansible 'ansible'
     }
+
+    // Define the stages of the pipeline
     stages {
+        // Define the 'cleanws' stage to clean the workspace
         stage('cleanws') {
             steps {
+                // Step to clean the workspace
                 cleanWs()
             }
         }
+
+        // Define the 'checkout' stage to checkout the code from GitHub
         stage('checkout'){
             steps{
+                // Step to checkout the 'main' branch of the repository
                 git branch: 'main', url: 'https://github.com/Aj7Ay/ANSIBLE.git'
             }
         }
+
+        // Define the 'TRIVY FS SCAN' stage to run a filesystem scan using Trivy
         stage('TRIVY FS SCAN') {
             steps {
+                // Step to run the Trivy filesystem scan and save the output to a file
                 sh "trivy fs . > trivyfs.txt"
             }
-        }    
+        }
+
+        // Define the 'ansible provision' stage to provision infrastructure using Ansible
         stage('ansible provision') {
           steps {
-             // To suppress warnings when you execute the playbook    
+             // Step to suppress warnings by installing a specific version of the requests library
              sh "pip install --upgrade requests==2.20.1"
+             // Step to run the Ansible playbook 'ec2.yaml'
              ansiblePlaybook playbook: 'ec2.yaml' 
             }
         }
