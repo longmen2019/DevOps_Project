@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven3'
+    }
+
+    environment {
+        registry = '471112503258.dkr.ecr.us-east-1.amazonaws.com/my-docker-repo'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/longmen2022/Petclinic.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh "mvn clean install"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build(env.registry)
+                    dockerImage.tag("$BUILD_NUMBER")
+                }
+            }
+        }
+        stage('Push Image') { // Fixed Stage Naming
+            steps {
+                script {
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 471112503258.dkr.ecr.us-east-1.amazonaws.com"
+                    sh "docker tag ${env.registry}:latest ${env.registry}:${BUILD_NUMBER}"
+                    sh "docker push ${env.registry}:${BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('Helm Deploy') { // Fixed Helm Stage Syntax
+            steps {
+                script {
+                    sh """
+                    helm upgrade first --install mychart --namespace helm-deployment --set image.tag=${BUILD_NUMBER}
+                    """
+                }
+            }
+        }
+    }
+}
+
+
+*******************************
+stage('Pushing to Docker') {
+            steps {
+                script {
+                    sh """
+          withDockerRegistry(credentialsId: 'docker-cred') {
+                sh 'docker login'
+                sh 'docker build -t app:$BUILD_NUMBER .'
+                sh 'docker tag app:$BUILD_NUMBER lmen776/springbootapp:$BUILD_NUMBER'
+                sh 'docker push lmen776/springbootapp:$BUILD_NUMBER'
+                    """
+                }
+            }
+        }
+    }
+}
+
