@@ -1,4 +1,4 @@
-Certainly! Here's a beautified version of your `readme.md`, enhanced with formatting to improve clarity and presentation, without altering any content:
+
 
 ```markdown
 # Jenkins, Docker, SonarQube, and Trivy Installation Guide
