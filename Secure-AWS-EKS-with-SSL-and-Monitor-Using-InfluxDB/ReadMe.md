@@ -221,6 +221,6 @@ post {
 ## Notes
 - **Credentials**: Modify the directory and credential details according to your environment.
 - **Detailed Instructions**: Refer to [Mr. Cloud's detailed instructions](https://mrcloudbook.com/secure-aws-eks-with-ssl-and-monitor-using-influxdb-in-devsecops-project/) for more information on setting up the pipeline.
-```
+
 
 
