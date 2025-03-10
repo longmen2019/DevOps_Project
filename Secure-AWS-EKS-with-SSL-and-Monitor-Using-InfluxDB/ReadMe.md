@@ -1,5 +1,4 @@
 
-```markdown
 # CI/CD Pipeline for SSL-EKS and Two-Tier Flask App
 
 This project utilizes Jenkins to automate the deployment and scanning of the SSL-EKS and Two-Tier Flask App. This pipeline performs various stages such as checking out the code, running Terraform scripts, SonarQube analysis, Snyk tests, Docker build and push, and deploying to Kubernetes.
