@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# bg-remover-py
-=======
+
 # Background Remover Python Application
 
 A simple flask app to remove the background of an image with [Rembg](https://github.com/danielgatis/rembg)
@@ -540,4 +538,4 @@ To deploy an application with ArgoCD, you can follow these steps, which I'll out
 1. **Cleanup AWS EC2 Instances:**
     - Terminate AWS EC2 instances that are no longer needed.
     - Terminate EKS Cluster, Nodegroup and LoadBalancers.
->>>>>>> 4c4912f (first commmit)
+
