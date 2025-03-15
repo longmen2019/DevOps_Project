@@ -1,21 +1,43 @@
-apiVersion: apps/v1
-kind: Deployment
+# Specifies the API version for Kubernetes. "apps/v1" is commonly used for Deployment objects.
+apiVersion: apps/v1 
+
+# Indicates the type of Kubernetes resource being created. Here, it's a Deployment.
+kind: Deployment 
+
+# Metadata section provides identifying details for the resource.
 metadata:
-  name: background-remover-python-app
-  labels:
-    app: background-remover-python-app
+  # The name of the Deployment, used to identify it within the cluster.
+  name: background-remover-python-app 
+  # Labels are key-value pairs used to organize and select Kubernetes resources.
+  labels: 
+    # Label for the application, useful for querying and managing resources associated with this app.
+    app: background-remover-python-app 
+
+# Defines the specifications for the Deployment.
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: background-remover-python-app
+  # The number of pod replicas to be created. Two pods will be run for high availability.
+  replicas: 2 
+  # Specifies how to identify the pods that this Deployment will manage.
+  selector: 
+    matchLabels: 
+      # Matches the pods that have this specific label.
+      app: background-remover-python-app 
+
+  # Template section defines the configuration for the pods to be created.
   template:
+    # Metadata for the pods, including labels for identification.
     metadata:
       labels:
-        app: background-remover-python-app
+        # Assigns the same label to the pods for easy grouping.
+        app: background-remover-python-app 
+
+    # Spec section specifies the configuration for the containers within the pods.
     spec:
       containers:
-      - name: background-remover-python-app
-        image: amonkincloud/background-remover-python-app:latest
+      # Defines the first (and only) container in this Deployment.
+      - name: background-remover-python-app 
+        # Specifies the Docker image to use for the container. This one is hosted on Docker Hub.
+        image: lmen776/background-remover-python-app:latest 
+        # Defines the port that the container will expose for communication.
         ports:
-        - containerPort: 5100
+        - containerPort: 5100 
