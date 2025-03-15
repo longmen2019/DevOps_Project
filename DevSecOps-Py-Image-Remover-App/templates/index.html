@@ -1,25 +1,47 @@
+<!-- Declares the document type as HTML5. This is mandatory for modern web pages to ensure compatibility. -->
 <!DOCTYPE html>
+
+<!-- Starts the HTML document and specifies the language as English. -->
 <html lang="en">
+
+<!-- The head section contains metadata and resources for the web page. -->
 <head>
+    <!-- Specifies the character encoding for the document as UTF-8, which supports most characters globally. -->
     <meta charset="UTF-8">
+    <!-- Ensures the web page is responsive by setting the width to the device's screen size and adjusting the scale. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sets the title of the web page, which appears in the browser tab. -->
     <title>Image Background Remover</title>
+    <!-- Links to the Bootstrap 4.3.1 CSS framework for styling and layout purposes. -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
+
+<!-- The body section contains the visible content of the web page. -->
 <body>
+    <!-- Creates a container with some margin at the top, using Bootstrap classes for layout and spacing. -->
     <div class="container mt-5">
+        <!-- Displays a centered heading for the web page title. -->
         <h1 class="text-center">Upload Image to Remove Background</h1>
+        <!-- Defines a form for uploading an image, using the POST method for data submission. -->
         <form method="POST" enctype="multipart/form-data">
+            <!-- Creates a form group for better spacing and styling of the input field. -->
             <div class="form-group">
+                <!-- Adds a file input field for selecting an image, with Bootstrap styling applied. -->
                 <input type="file" name="file" class="form-control-file">
             </div>
+            <!-- Adds a submit button styled as a primary Bootstrap button to submit the form. -->
             <button type="submit" class="btn btn-primary">Remove Background</button>
         </form>
 
+        <!-- A Flask template block for displaying flash messages dynamically. -->
         {% with messages = get_flashed_messages(with_categories=true) %}
+          <!-- Checks if there are any flash messages to display. -->
           {% if messages %}
+            <!-- Creates a container to display the messages with a margin at the top. -->
             <div class="mt-4">
+              <!-- Iterates through the flashed messages, with each message having a category for styling. -->
               {% for category, message in messages %}
+                <!-- Displays each message with a Bootstrap alert class, dynamically applying the category for styling (e.g., success, error). -->
                 <div class="alert alert-{{ category }}">{{ message }}</div>
               {% endfor %}
             </div>
@@ -27,4 +49,6 @@
         {% endwith %}
     </div>
 </body>
+
+<!-- Ends the HTML document. -->
 </html>
