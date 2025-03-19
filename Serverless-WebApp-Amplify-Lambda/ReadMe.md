@@ -1,6 +1,4 @@
-Got it! Here’s the updated `README.md` file with "Real-time DevOps Day2Day" removed:
 
-```markdown
 # Serverless Web Application using AWS Amplify, Lambda, and DynamoDB
 
 ## Project Overview
