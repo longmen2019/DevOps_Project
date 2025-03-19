@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Form</title>
+    <style>
+        input {
+            color: #232F3E;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            margin-left: 20px;
+        }
+    </style>
+    <script>
+        var callAPI = () => {
+            var firstName = document.getElementById('fName').value;
+            var lastName = document.getElementById('lName').value;
+
+            // Check if both firstName and lastName are provided
+            if (!firstName || !lastName) {
+                alert("Please enter both First Name and Last Name.");
+                return;
+            }
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({ "firstName": firstName, "lastName": lastName });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            // Make the API call to the correct API Gateway URL
+            fetch("https://t77mlbmsze.execute-api.us-east-1.amazonaws.com/dev", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.error) {
+                    alert("Error: " + result.error);
+                } else {
+                    alert(result.body);
+                }
+            })
+            .catch(error => console.error('API Error:', error));
+        };
+    </script>
+</head>
+<body>
+    <form>
+        <label>First Name:</label>
+        <input type="text" id="fName">
+        <label>Last Name:</label>
+        <input type="text" id="lName">
+        <button type="button" onclick="callAPI()">Call API</button>
+    </form>
+</body>
+</html>
