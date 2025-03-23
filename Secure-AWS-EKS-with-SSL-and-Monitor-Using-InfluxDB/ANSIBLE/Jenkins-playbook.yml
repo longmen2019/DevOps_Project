@@ -1,0 +1,56 @@
+# Define the playbook name and begin the playbook
+- name: Install jenkins
+  # Define the hosts to run the playbook on
+  hosts: localhost
+  # Grant sudo privileges to run tasks as a superuser
+  become: yes
+  # Run tasks as the root user
+  become_user: root
+
+  # Define the tasks to be executed
+  tasks:
+  # Task to update all packages to their latest version
+  - name: Update all packages to their latest version
+    apt:
+      name: "*"
+      state: latest
+
+  # Task to download Jenkins key
+  - name: download jenkins key
+    ansible.builtin.get_url:
+      url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      dest: /usr/share/keyrings/jenkins-keyring.asc
+        
+  # Task to add Jenkins repository
+  - name: Add Jenkins repo
+    ansible.builtin.apt_repository:
+      repo: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+      state: present
+      filename: jenkins.list  
+
+  # Task to update all packages to their latest version
+  - name: Update all packages to their latest version
+    apt:
+      name: "*"
+      state: latest
+
+  # Task to install fontconfig package
+  - name: Install fontconfig
+    shell: apt install fontconfig -y    
+
+  # Task to install Java Runtime Environment
+  - name: Install java
+    shell: apt install fontconfig openjdk-17-jre -y  
+
+  # Task to install Jenkins
+  - name: Install the Jenkins
+    ansible.builtin.apt:
+      name: jenkins
+      state: present  
+
+  # Task to ensure Jenkins service is running and enabled
+  - name: Make sure a service unit is running
+    ansible.builtin.systemd:
+      state: started
+      name: jenkins
+      enabled: yes

@@ -1,0 +1,33 @@
+# Specifies the type of Kubernetes resource being created. Here, it's a Service.
+kind: Service 
+
+# Specifies the API version for Kubernetes. "v1" is typically used for core objects like Services.
+apiVersion: v1 
+
+# Metadata section provides identifying details for the Service.
+metadata:
+  # The name of the Service, used to identify it within the cluster.
+  name: node-exporter 
+  # Specifies the namespace where this Service will be created. Namespaces help in organizing resources.
+  namespace: prometheus-node-exporter 
+
+# Defines the specifications for the Service.
+spec:
+  # The selector identifies the pods that this Service will target.
+  selector:
+      # Matches pods that have the label "app: node-exporter."
+      app: node-exporter 
+
+  # Defines the ports that the Service will expose.
+  ports:
+  - # The name of this port configuration, useful for identification purposes.
+    name: node-exporter 
+    # The communication protocol to use. Here, TCP is specified.
+    protocol: TCP 
+    # The port on which the Service is exposed within the cluster.
+    port: 9100 
+    # The port on the container to which traffic will be directed.
+    targetPort: 9100 
+
+  # Specifies the type of Service. "NodePort" exposes the Service on a port accessible from outside the cluster.
+  type: NodePort 

@@ -1,0 +1,29 @@
+# Specifies the API version for Kubernetes. "v1" is commonly used for core objects like Services.
+apiVersion: v1 
+
+# Indicates the type of Kubernetes resource being created. Here, it's a Service.
+kind: Service 
+
+# Metadata section provides identifying details for the Service.
+metadata:
+  # The name of the Service, used to identify it within the cluster.
+  name: background-remover-python-app 
+  # Labels are key-value pairs used to organize and manage Kubernetes resources.
+  labels: 
+    # Label for the application, which helps Kubernetes associate this Service with other related resources.
+    app: background-remover-python-app 
+
+# Defines the specifications for the Service.
+spec:
+  # Specifies the type of Service. "LoadBalancer" exposes the Service externally with an external IP address.
+  type: LoadBalancer 
+  # Defines the ports that the Service will expose.
+  ports:
+  - # The port on which the Service is exposed to external clients.
+    port: 5100 
+    # The port on the target container to which traffic will be directed.
+    targetPort: 5100 
+  # The selector identifies the pods that this Service will target.
+  selector: 
+    # Matches pods that have the label "app: background-remover-python-app."
+    app: background-remover-python-app 

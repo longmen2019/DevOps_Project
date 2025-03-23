@@ -1,0 +1,44 @@
+- name: Create EC2 KeyPair
+  amazon.aws.ec2_key:
+    name: ansible-ec2-keypair
+  no_log: true
+  register: key_out
+
+- name: Show the Keypair contents
+  debug:
+    var: key_out.key.private_key
+  when: key_out.changed
+
+- name: Save the Private Key
+  copy:
+    content: "{{ key_out.key.private_key }}"
+    dest: ansible-key.pem
+    mode: '0600'
+  when: key_out.changed
+
+- name: Create Security Group
+  amazon.aws.ec2_group:
+    name: ansible-sg
+    description: "Security group for Ansible-created EC2 instance"
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        ports:
+          - 80
+        cidr_ip: 0.0.0.0/0
+  register: sg
+
+- name: Start an instance with a public IP address
+  amazon.aws.ec2_instance:
+    name: "frontend"
+    key_name: "{{ key_out.key.name }}"
+    vpc_subnet_id: "{{ public_subnet.subnet.id }}"
+    instance_type: t2.micro
+    security_group: "{{ sg.group_id }}"
+    network:
+      assign_public_ip: true
+    image_id: ami-0c7217cdde317cfec

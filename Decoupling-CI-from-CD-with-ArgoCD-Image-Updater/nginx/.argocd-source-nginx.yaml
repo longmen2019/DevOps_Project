@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.name
+    value: lmen776/nginx-demo1
+    forcestring: true
+  - name: image.tag
+    value: v1.1
+    forcestring: true

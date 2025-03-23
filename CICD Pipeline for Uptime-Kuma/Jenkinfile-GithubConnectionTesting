@@ -1,0 +1,21 @@
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage("GitHub Checkout") {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: 'main']],
+                    userRemoteConfigs: [[url: 'https://github.com/longmen2022/uptimekuma.git']]
+                ])
+            }
+        }
+    }
+}
+```
+
+### Key Points:
+1. **`checkout` Function**: Configures the pipeline to pull code from the specified GitHub repository (`https://github.com/longmen2022/uptimekuma.git`) and branch (`main`).
+2. **Minimal Workflow**: Focused solely on the GitHub checkout stage for simplicity.
