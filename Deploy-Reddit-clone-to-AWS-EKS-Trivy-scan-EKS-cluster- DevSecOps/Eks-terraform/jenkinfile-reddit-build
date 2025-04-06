@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'jdk17'         // Specify JDK version
+        nodejs 'node16'     // Specify Node.js version
+    }
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner' // Set path for Sonar Scanner
+    }
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Clean up Jenkins workspace
+            }
+        }
+        stage('Checkout from Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/longmen2022/Reddit-Eks.git' // Clone Git repository
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh "npm install" // Install project dependencies using npm
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') { // Configure SonarQube environment
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectName=Reddit \
+                    -Dsonar.projectKey=Reddit ''' // Run SonarQube analysis
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' // Wait for SonarQube quality gate results
+                }
+            }
+        }
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check' // Run OWASP dependency scan
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml' // Publish dependency scan report
+            }
+        }
+        stage('Trivy Filesystem Scan') {
+            steps {
+                sh "trivy fs . > trivyfs.txt" // Scan filesystem for vulnerabilities and save results to a file
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') { // Authenticate with Docker registry
+                        sh "docker build -t reddit ."               // Build Docker image
+                        sh "docker tag reddit lmen776/reddit:latest" // Tag Docker image
+                        sh "docker push lmen776/reddit:latest"       // Push Docker image to registry
+                    }
+                }
+            }
+        }
+        stage('Trivy Image Scan') {
+            steps {
+                sh "trivy image lmen776/reddit:latest > trivy.txt" // Scan Docker image for vulnerabilities and save results to a file
+            }
+        }
+        stage('Deploy to Container') {
+            steps {
+                sh "docker run -d --name reddit -p 3000:3000 lmen776/reddit:latest" // Deploy Docker container
+            }
+        }
+    }
+}
