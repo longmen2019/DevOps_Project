@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Specifies the XML version and character encoding used in the file. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Defines the Maven Project Object Model (POM) namespace and the location of its schema. -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <!-- Specifies the version of the POM model being used. -->
+
+    <parent>
+        <!-- Defines the parent project configuration to inherit common settings. -->
+        <groupId>org.springframework.boot</groupId>
+        <!-- The group ID of the Spring Boot parent project. -->
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!-- The artifact ID of the parent project. -->
+        <version>3.2.5</version>
+        <!-- The version of the parent project being used. -->
+        <relativePath/> <!-- lookup parent from repository -->
+        <!-- Specifies that Maven should look up the parent project in the repository instead of a relative path. -->
+    </parent>
+
+    <groupId>com.javatechie</groupId>
+    <!-- Defines the unique identifier for the project group. -->
+
+    <artifactId>course-service</artifactId>
+    <!-- Specifies the project's unique artifact ID (usually the application name). -->
+
+    <version>0.0.1-SNAPSHOT</version>
+    <!-- The project's version number. "SNAPSHOT" indicates it's a development version. -->
+
+    <name>aws-demo</name>
+    <!-- Provides the name of the application. -->
+
+    <description>Simple Spring Boot Application</description>
+    <!-- A brief description of the project. -->
+
+    <properties>
+        <!-- Defines project-wide properties for easier configuration. -->
+        <java.version>17</java.version>
+        <!-- Specifies the Java version to use for compiling the application. -->
+    </properties>
+
+    <dependencies>
+        <!-- Defines the external libraries or frameworks required by the project. -->
+        <dependency>
+            <!-- Spring Boot Starter for building web applications. -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- Lombok simplifies Java code by automatically generating boilerplate code (e.g., getters, setters). -->
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <!-- Spring Boot Starter for testing the application. Includes libraries like JUnit. -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <!-- SpringDoc OpenAPI dependency for generating API documentation. -->
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Defines build-related configurations for the project. -->
+        <plugins>
+            <!-- Plugin to package Spring Boot applications using Maven. -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <finalName>course-service</finalName>
+        <!-- Specifies the final name of the generated artifact. -->
+    </build>
+
+</project>
