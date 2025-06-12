@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-recommender-service
+spec:
+  selector:
+    app: book-recommender
+  ports:
+  - port: 80
+    targetPort: 8501
+    protocol: TCP
+  type: LoadBalancer

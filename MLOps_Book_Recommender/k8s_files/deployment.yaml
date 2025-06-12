@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-recommender-deployment
+  labels:
+    app: book-recommender
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: book-recommender
+  template:
+    metadata:
+      labels:
+        app: book-recommender
+    spec:
+      containers:
+      - name: book-recommender
+        image: lmen776/book-recommender:latest
+        ports:
+        - containerPort: 8501
