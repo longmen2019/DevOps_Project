@@ -1,5 +1,3 @@
-Absolutely! Here's a combined and polished `README.md` that integrates your project's structure, environment setup, Docker deployment, and full CI/CD + Kubernetes toolchain—all under one clean roof:
-
 ```markdown
 # 📚 End-to-End Book Recommender System
 
