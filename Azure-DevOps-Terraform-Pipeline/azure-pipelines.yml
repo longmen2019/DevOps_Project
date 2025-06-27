@@ -1,0 +1,52 @@
+trigger:
+  - main
+stages:
+  - stage: Build
+    jobs:
+      - job: build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: TerraformTask@5
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'Azure subscription 1(62f3fe91-0f4a-4014-86d4-0e429ed8234b)'
+              backendAzureRmStorageAccountName: 'longmenbackend'
+              backendAzureRmContainerName: 'prod-tfstate'
+              backendAzureRmKey: 'prod.terraform.tfstate'
+          - task: TerraformTask@5
+            displayName: 'Terraform Validate'
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+          - task: TerraformTask@5
+            displayName: 'Terraform Format'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'fmt -check'
+              outputTo: 'console'
+              environmentServiceNameAzureRM: 'Azure subscription 1(62f3fe91-0f4a-4014-86d4-0e429ed8234b)'
+          - task: TerraformTask@5
+            displayName: 'Terraform Plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              commandOptions: '-out=$(Build.SourcesDirectory)/tfplanfile'
+              environmentServiceNameAzureRM: 'Azure subscription 1(62f3fe91-0f4a-4014-86d4-0e429ed8234b)'
+          - task: ArchiveFiles@2
+            displayName: 'Archive Files'
+            inputs:
+              rootFolderOrFile: '$(Build.SourcesDirectory)'
+              includeRootFolder: true
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              replaceExistingArchive: true
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Build Artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: '$(Build.BuildId)-build'
+              publishLocation: 'Container'
